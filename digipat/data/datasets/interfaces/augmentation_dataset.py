@@ -11,8 +11,10 @@ class OODAugmentationDataset(Dataset):
         super().__init__()
         self.dataset = dataset
         self.set_augmentation(augmentation)
+        self.pseudo_random = False
 
     def init_seeds(self, seed=42):
+        self.pseudo_random = True
         np.random.seed(seed)
         self.seeds = (np.random.random(len(self)) * 10000).astype(np.int64)
         np.random.seed()
@@ -20,7 +22,8 @@ class OODAugmentationDataset(Dataset):
     def set_augmentation(self, augmentation: OODAugmantation):
         if augmentation == None:
             self.augmentation = Nothing()
-        self.mode = "full_ood"
+            return
+        self.dataset.mode = "full_ood"
         assert isinstance(augmentation, OODAugmantation)
         self.augmentation = augmentation
 
@@ -31,7 +34,7 @@ class OODAugmentationDataset(Dataset):
         if self.pseudo_random:
             random.seed(self.seeds[index])
             np.random.seed(self.seeds[index])
-        return self._apply_augmentations(*super().__getitem__(index))
+        return self._apply_augmentations(*self.dataset.__getitem__(index))
 
     def __len__(self):
         return len(self.dataset)
