@@ -1,15 +1,19 @@
 import random
 from os import listdir
 from os.path import join
+from copy import deepcopy
 
-from ...augmentations import OODAugmantation
+from ...augmentations import OODAugmantation, SampledOODAugmentation
 from .artifacts import ArtifactAugmentation, data_folder
+from ...severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
+from ...datatypes import DistributionSampleType
 
 
 class DarkSpotsAugmentation(OODAugmantation, ArtifactAugmentation):
     def __init__(
         self,
         scale=1,
+        severity: SeverityMeasurement = None,
         path=join(data_folder, "dark_spots/small_spot.png"),
         mask_threshold=0.5,
     ) -> None:
@@ -17,9 +21,15 @@ class DarkSpotsAugmentation(OODAugmantation, ArtifactAugmentation):
         self.scale = scale
         self.path = path
         self.mask_threshold = mask_threshold
+        self.severity_class: SeverityMeasurement = (
+            PixelPercentageSeverityMeasurement() if severity == None else severity
+        )
+
+    def param_range(self):
+        return {"scale": (0.1, 5)}
 
     def __call__(self, img, mask):
-        return super().transparentOverlay(
+        img, mask = super().transparentOverlay(
             img,
             mask,
             scale=self.scale,
@@ -32,4 +42,18 @@ class DarkSpotsAugmentation(OODAugmantation, ArtifactAugmentation):
             else self.path,
             width_slack=(-0.1, -0.1),
             height_slack=(-0.1, -0.1),
+        )
+
+        severity: SeverityMeasurement = deepcopy(self.severity_class)
+        severity.calculate_measurement(img, mask, {"scale": self.scale})
+
+        return (
+            img,
+            mask,
+            {
+                "type": DistributionSampleType.IN_DISTRIBUTION_DATA
+                if severity.get_bin(ignore_true_bin=True) == -1
+                else DistributionSampleType.AUGMENTATION_OOD_DATA,
+                "severity": severity,
+            },
         )

@@ -14,6 +14,7 @@ from .utility import (
     PickNComposite,
     ProbabilityAugmentation,
     Nothing,
+    SampledOODAugmentation,
 )
 
 from .patchwise import (
