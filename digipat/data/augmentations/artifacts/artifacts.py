@@ -7,6 +7,8 @@ import imageio
 from random import randint
 import os
 
+from ...metadata import *
+
 this_dir, this_filename = os.path.split(__file__)
 data_folder = os.path.join(this_dir, "imgs")
 

@@ -5,7 +5,7 @@ from copy import deepcopy
 
 from ...augmentations import OODAugmantation, SampledOODAugmentation
 from .artifacts import ArtifactAugmentation, data_folder
-from ...severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
+from ....ood.severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
 from ...datatypes import DistributionSampleType
 
 
@@ -24,6 +24,9 @@ class ThreadAugmentation(OODAugmantation, ArtifactAugmentation):
         self.severity_class: SeverityMeasurement = (
             PixelPercentageSeverityMeasurement() if severity == None else severity
         )
+
+    def param_range(self):
+        return {"scale": (0.1, 9)}
 
     def threads_preproces(self, img, mask):
         return super().transparentOverlay(

@@ -21,12 +21,7 @@ class SeverityMeasurement:
 class PixelPercentageSeverityMeasurement(SeverityMeasurement):
     def __init__(self):
         super().__init__(
-            lambda value, num_bins=None, ignore_true_bin=False: whole_binning(
-                value=value,
-                range=(0, 1),
-                num_bins=num_bins,
-                ignore_true_bin=ignore_true_bin,
-            ),
+            binning_fn((0, 1)),
             "PixelPercentage",
         )
         self.range = (0, 1)
@@ -41,14 +36,7 @@ class PixelPercentageSeverityMeasurement(SeverityMeasurement):
 class ParameterSeverityMeasurement(SeverityMeasurement):
     def __init__(self, param, param_range, custom_binning_fn=None):
         super().__init__(
-            lambda value, num_bins=None, ignore_true_bin=False: whole_binning(
-                value=value,
-                range=param_range,
-                num_bins=num_bins,
-                ignore_true_bin=ignore_true_bin,
-            )
-            if custom_binning_fn == None
-            else custom_binning_fn,
+            binning_fn(param_range) if custom_binning_fn == None else custom_binning_fn,
             f"Parameter {param}",
         )
         self.param = param

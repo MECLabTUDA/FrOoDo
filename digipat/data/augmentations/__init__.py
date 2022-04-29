@@ -1,12 +1,5 @@
 from .aug import *
 
-from .artifacts import (
-    FatAugmentation,
-    DarkSpotsAugmentation,
-    SquamousAugmentation,
-    ThreadAugmentation,
-)
-
 from .utility import (
     AllComposite,
     NTimesAugmentation,
@@ -15,6 +8,13 @@ from .utility import (
     ProbabilityAugmentation,
     Nothing,
     SampledOODAugmentation,
+)
+
+from .artifacts import (
+    FatAugmentation,
+    DarkSpotsAugmentation,
+    SquamousAugmentation,
+    ThreadAugmentation,
 )
 
 from .patchwise import (
