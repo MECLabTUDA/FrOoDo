@@ -23,7 +23,7 @@ class SampledOODAugmentation(OODAugmantation):
         self.sample_params()
         if self.skip:
             # if no augmentation is applied, data remains IN Distribution
-            metadata["type"] = DistributionSampleType.IN_DISTRIBUTION_DATA
+            metadata["type"] = DistributionSampleType.IN_DATA
             return img, mask, metadata
 
         i = 0
@@ -32,10 +32,7 @@ class SampledOODAugmentation(OODAugmantation):
             # This my be necessary if the artifact is places outside the patch
             _img, _mask, _metadata = self.augmentation(img, mask, metadata)
 
-            if (
-                _metadata["type"] is DistributionSampleType.AUGMENTATION_OOD_DATA
-                or i >= 10
-            ):
+            if _metadata["type"] is DistributionSampleType.OOD_DATA or i >= 10:
                 break
             self.sample_params()
             i += 1

@@ -6,7 +6,7 @@ import random as random
 from copy import deepcopy
 
 from ...ood.severity import SeverityMeasurement
-from ..datatypes import DistributionSampleType
+from ..datatypes import DistributionSampleType, OODReason
 from ..metadata import SampleMetadata, MetadataCommonTypes
 from .utils import init_augmentation
 
@@ -22,9 +22,10 @@ class Augmantation:
         severity: SeverityMeasurement = deepcopy(self.severity_class)
         severity.calculate_measurement(img, mask, {"scale": self.scale})
         if severity.get_bin(ignore_true_bin=True) == -1:
-            metadata.type = DistributionSampleType.IN_DISTRIBUTION_DATA
+            metadata.type = DistributionSampleType.IN_DATA
         else:
-            metadata.type = DistributionSampleType.AUGMENTATION_OOD_DATA
+            metadata.type = DistributionSampleType.OOD_DATA
+            metadata[MetadataCommonTypes.OOD_REASON.name] = OODReason.AUGMENTATION_OOD
         metadata[MetadataCommonTypes.OOD_SEVERITY.name] = severity
 
         return metadata
