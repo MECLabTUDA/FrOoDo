@@ -3,7 +3,7 @@ import numpy as np
 
 import random
 
-from ...augmentations import OODAugmantation, Nothing
+from ....ood.augmentations import OODAugmantation, Nothing
 from ...datatypes import TaskType
 
 
@@ -12,12 +12,16 @@ class OODAugmentationDataset(Dataset):
         self,
         dataset: Dataset,
         augmentation: OODAugmantation = None,
+        seed=None,
         task_type: TaskType = TaskType.SEGMENTATION,
     ) -> None:
         super().__init__()
         self.dataset = dataset
         self.set_augmentation(augmentation)
-        self.pseudo_random = False
+        if seed == None:
+            self.pseudo_random = False
+        else:
+            self.init_seeds(seed)
         self.task_type = task_type
 
     def init_seeds(self, seed=42):
@@ -38,7 +42,7 @@ class OODAugmentationDataset(Dataset):
         if self.task_type is TaskType.SEGMENTATION:
             return self.augmentation(*args)
         elif self.task_type is TaskType.CLASSIFICATION:
-            # In case of classification the label is not a mask. Therefore for the augmentation a pseudo_mask is created to calculate sevrity
+            # In case of classification the label is not a mask. Therefore for the augmentation a pseudo_mask is created to calculate severity
             aug_args = args
             aug_args[1] = None
             _img, _, _metadata = self.augmentation(*aug_args)

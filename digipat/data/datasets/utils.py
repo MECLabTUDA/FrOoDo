@@ -1,6 +1,7 @@
 import tifffile as tiff
 import zarr
 import numpy as np
+import torch
 
 import random
 from os.path import join
@@ -70,6 +71,13 @@ def get_valid_regions_of_image(
     return tiles, [num_valid, num_invalid]
 
 
+def to_tensor(array, mask=False):
+    if not mask:
+        return torch.from_numpy(array).permute(2, 0, 1)
+    else:
+        return torch.from_numpy(array)
+
+
 def apply_mask_changes(
     mask,
     ignore_classes,
@@ -77,22 +85,28 @@ def apply_mask_changes(
     ignore_index,
     remain_classes,
     map_classes,
-    mode="mask",
+    mode=["mask"],
 ):
-    if mode == "mask":
+    masks = {}
+    if "mask" in mode:
+        _mask = mask.copy()
         for f, t in map_classes:
-            mask[mask == f] = t
-        mask[np.in1d(mask, ignore_classes + ood_classes).reshape(mask.shape)] = (
+            _mask[_mask == f] = t
+        _mask[np.in1d(_mask, ignore_classes + ood_classes).reshape(_mask.shape)] = (
             ignore_index + 1
         )
-        mask = mask - 1
-    elif mode == "ood" or mode == "full_ood":
+        _mask = _mask - 1
+        masks["segmantation_mask"] = to_tensor(_mask.astype(np.longlong), True)
+
+    if "ood" in mode or "full_ood" in mode:
+        _mask = mask.copy()
         for f, t in map_classes:
-            mask[mask == f] = t
-        remain_indices = np.in1d(mask, remain_classes).reshape(mask.shape)
-        ood_indices = np.in1d(mask, ood_classes).reshape(mask.shape)
-        ignore_indices = np.in1d(mask, ignore_classes).reshape(mask.shape)
-        mask[remain_indices] = 1
-        mask[ood_indices] = 0 if mode == "ood" else ignore_index
-        mask[ignore_indices] = ignore_index
-    return mask
+            _mask[_mask == f] = t
+        remain_indices = np.in1d(_mask, remain_classes).reshape(_mask.shape)
+        ood_indices = np.in1d(_mask, ood_classes).reshape(_mask.shape)
+        ignore_indices = np.in1d(_mask, ignore_classes).reshape(_mask.shape)
+        _mask[remain_indices] = 1
+        _mask[ood_indices] = 0 if "ood" in mode else ignore_index
+        _mask[ignore_indices] = ignore_index
+        masks["ood_mask"] = to_tensor(_mask.astype(np.longlong), True)
+    return masks

@@ -1,15 +1,12 @@
 from collections import defaultdict
 
 from ..datatypes import DistributionSampleType
-
-
-def dict_default():
-    return None
+from ...utils import dict_default
 
 
 class SampleMetadata:
     def __init__(
-        self, type=DistributionSampleType.UNDEFINED, data_dict: defaultdict = None
+        self, type=DistributionSampleType.IN_DATA, data_dict: defaultdict = None
     ) -> None:
         if data_dict == None:
             self.data = defaultdict(dict_default)
@@ -51,6 +48,12 @@ class SampleMetadata:
             self.type = value
             return
         self.data[idx] = value
+
+    def __delitem__(self, item: str) -> None:
+        if item == "type":
+            print("Type cant be deleted")
+        else:
+            self._data.__delattr__(item)
 
     def __repr__(self) -> str:
         return f"{self.type} - {self.data.items()}"

@@ -92,7 +92,7 @@ class MultiFileOverlappingTilesDataset(Dataset):
         self.mode = mode
 
     def _get_filename(self):
-        return f"{self.dataset_name}_{self.size[0]}_{self.size[1]}_{self.overlap}_{self.non_ignore_threshold}_{self.mode}.json"
+        return f"{self.dataset_name}_{self.size[0]}_{self.size[1]}_{self.overlap}_{self.non_ignore_threshold}_mask.json"
 
     def _parse_data(self, data, files):
         tiles = []
@@ -149,12 +149,6 @@ class MultiFileOverlappingTilesDataset(Dataset):
     def __len__(self):
         return len(self.tiles)
 
-    def _to_tensor(self, array, mask=False):
-        if not mask:
-            return torch.from_numpy(array).permute(2, 0, 1)
-        else:
-            return torch.from_numpy(array)
-
     def _random_crop(self, img, mask, height, width):
         # print(img.shape)
         # print(img.shape, mask.shape, height, width)
@@ -165,7 +159,7 @@ class MultiFileOverlappingTilesDataset(Dataset):
         return (img, mask)
 
     def __getitem__(self, index):
-        image = self._to_tensor(
+        image = to_tensor(
             read_tif_region(
                 join(self.folder, "images", self.tiles[index][0]),
                 *self.tiles[index][1:],
@@ -173,27 +167,20 @@ class MultiFileOverlappingTilesDataset(Dataset):
             / 255.0
         )
 
-        mask = self._to_tensor(
-            apply_mask_changes(
-                read_tif_region(
-                    join(self.folder, "masks", self.tiles[index][0]),
-                    *self.tiles[index][1:],
-                ),
-                map_classes=self.map_classes,
-                ignore_classes=self.ignore_classes,
-                ood_classes=self.ood_classes,
-                ignore_index=self.ignore_index,
-                remain_classes=self.remain_classes,
-                mode=self.mode,
-            ).astype(np.longlong),
-            mask=True,
+        masks = apply_mask_changes(
+            read_tif_region(
+                join(self.folder, "masks", self.tiles[index][0]),
+                *self.tiles[index][1:],
+            ),
+            map_classes=self.map_classes,
+            ignore_classes=self.ignore_classes,
+            ood_classes=self.ood_classes,
+            ignore_index=self.ignore_index,
+            remain_classes=self.remain_classes,
+            mode=self.mode,
         )
 
-        return (
-            random_crop(image, mask, *self.crop_size)
-            if self.crop_size != None
-            else (image, mask)
-        )
+        return image, masks
 
     def __str__(self):
         return f"Dataset '{self.dataset_name}' at location {self.folder} with {self.valid[0]} valid and {self.valid[1]} invalid tiles"

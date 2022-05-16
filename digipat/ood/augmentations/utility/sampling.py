@@ -2,8 +2,8 @@ import numpy as np
 
 import random
 
-from ..aug import OODAugmantation
-from ...datatypes import DistributionSampleType
+from ..types import OODAugmantation
+from ....data.datatypes import DistributionSampleType
 from ..utils import init_augmentation
 
 

@@ -1,4 +1,4 @@
-from .aug import *
+from .types import *
 
 from .utility import (
     AllComposite,
@@ -10,7 +10,7 @@ from .utility import (
     SampledOODAugmentation,
 )
 
-from .artifacts import (
+from .pathology.artifacts import (
     FatAugmentation,
     DarkSpotsAugmentation,
     SquamousAugmentation,

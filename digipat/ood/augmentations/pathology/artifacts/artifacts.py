@@ -7,7 +7,7 @@ import imageio
 from random import randint
 import os
 
-from ...metadata import *
+from .....data.metadata import *
 
 this_dir, this_filename = os.path.split(__file__)
 data_folder = os.path.join(this_dir, "imgs")
@@ -23,6 +23,7 @@ class ArtifactAugmentation:
         overlay_path="imgs/dark_spots/small_spot.png",
         width_slack=(0.3, 0.3),
         height_slack=(0.3, 0.3),
+        ignore_index=None,
     ):
         src = src.permute(1, 2, 0)
         overlay = imageio.imread(overlay_path) / 255.0
@@ -71,6 +72,13 @@ class ArtifactAugmentation:
         ood_indices = torch.from_numpy(
             overlay[from_y_art:until_y_art, from_x_art:until_x_art, 3] > mask_threshold
         )
+
+        if ignore_index != None:
+            ignore_mask = mask == ignore_index
+
         mask[from_y:until_y, from_x:until_x][ood_indices] = 0
+
+        if ignore_index != None:
+            mask[ignore_mask] = ignore_index
 
         return src.permute(2, 0, 1), mask

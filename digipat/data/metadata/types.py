@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 
-class MetadataCommonTypes(Enum):
+class SampleMetadataCommonTypes(Enum):
     OOD_SCORE = auto()
     OOD_SEVERITY = auto()
     OOD_REASON = auto()

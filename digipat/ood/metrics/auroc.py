@@ -9,7 +9,7 @@ from typing import List
 
 from .metrics import Metric, MetricGroup
 from ...data.container import MetadataContainer, Container
-from ...data.metadata import MetadataCommonTypes
+from ...data.metadata import SampleMetadataCommonTypes
 from ...data.datatypes import DistributionSampleType
 
 
@@ -29,9 +29,11 @@ class OODAuRoC(MetricGroup):
         self.score_colums = [
             col
             for col in metaframe
-            if col.startswith(f"{MetadataCommonTypes.OOD_SCORE.name}.")
+            if col.startswith(f"{SampleMetadataCommonTypes.OOD_SCORE.name}.")
         ]
-        ood_frame = metaframe[(metaframe["type"] == DistributionSampleType.OOD_DATA)]
+        ood_frame = metaframe[
+            (metaframe["type"] == DistributionSampleType.OOD_DATA)
+        ].reset_index()
         in_array = metaframe[(metaframe["type"] == DistributionSampleType.IN_DATA)][
             self.score_colums
         ].to_numpy()
@@ -49,14 +51,25 @@ class OODAuRoC(MetricGroup):
                 )
 
         else:
-            metaframe["bin"] = metaframe["OOD_SEVERITY"].apply(
+            ood_frame["bin"] = ood_frame["OOD_SEVERITY"].apply(
                 lambda x: x.get_bin(self.num_bins) if not pd.isna(x) else None
             )
-            ood_frame = ood_frame.groupby("bin")
+            ood_frame = ood_frame.groupby(self.group_by)
             ood_nested_list = (
                 ood_frame[self.score_colums].apply(lambda x: x.values.tolist()).tolist()
             )
-            bin_keys = ood_frame[self.score_colums].groups.keys()
+            self.group_keys = ood_frame[self.score_colums].groups.keys()
+
+            self.value = np.empty((len(self.score_colums), len(self.group_keys)))
+
+            for i, g_k in enumerate(self.group_keys):
+                group_array = np.array(ood_nested_list[i])
+                for j, _ in enumerate(self.score_colums):
+                    ood_labels = np.zeros((group_array.shape[0]))
+                    self.value[j, i] = self.metric(
+                        np.concatenate([in_labels, ood_labels]),
+                        np.concatenate([in_array[:, j], group_array[:, j]]),
+                    )
 
     def present(self, **kwargs):
         if self.group_by == None:
@@ -72,6 +85,14 @@ class OODAuRoC(MetricGroup):
                         headers=["Name", "AUC"],
                     )
                 )
+        else:
+            for i in range(len(self.score_colums)):
+                plt.plot(
+                    self.group_keys,
+                    self.value[i],
+                    label=self.score_colums,
+                )
+            plt.show()
 
 
 class AUROCMetric(Metric):

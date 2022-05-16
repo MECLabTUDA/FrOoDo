@@ -1,7 +1,6 @@
 import numpy as np
 
-from digipat.data.augmentations.aug import OODAugmantation
-
+from ..types import OODAugmantation
 from ...augmentations import AugmentationComposite
 
 

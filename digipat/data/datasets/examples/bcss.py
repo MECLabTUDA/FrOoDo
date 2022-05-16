@@ -6,7 +6,7 @@ from ..interfaces import (
     UtitlityDataset,
     MultiFileOverlappingTilesDataset,
 )
-from ...augmentations import OODAugmantation
+from ....ood.augmentations import OODAugmantation
 
 
 class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, UtitlityDataset):
@@ -19,7 +19,7 @@ class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, UtitlityDataset):
         size=(620, 620),
         crop_size=(600, 600),
         dataset_name="bcss",
-        mode="mask",
+        mode=["mask", "full_ood"],
         overlap=0.2,
         map_classes=[],
         ignore_classes=[0, 7, 17],
@@ -52,16 +52,20 @@ class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, UtitlityDataset):
         self.resize = Resize(self.resize_size, interpolation=InterpolationMode.NEAREST)
 
     def __getitem__(self, index):
-        img, mask = super().__getitem__(index)
-        img = self.resize(img.unsqueeze(0)).squeeze()
-        mask = self.resize(mask.unsqueeze(0).unsqueeze(0)).squeeze()
-        return img, mask
+        img, masks = super().__getitem__(index)
+        # img = self.resize(img.unsqueeze(0)).squeeze()
+        # for k, v in masks.items():
+        #    masks[k] = self.resize(v.unsqueeze(0).unsqueeze(0)).squeeze()
+        return img, masks
 
 
 class BCSS_OOD_Dataset(OODAugmentationDataset, UtitlityDataset):
     def __init__(
-        self, bcss_base: BCSS_Base_Dataset = None, augmentation: OODAugmantation = None
+        self,
+        bcss_base: BCSS_Base_Dataset = None,
+        augmentation: OODAugmantation = None,
+        seed=None,
     ) -> None:
         super().__init__(
-            BCSS_Base_Dataset() if bcss_base == None else bcss_base, augmentation
+            BCSS_Base_Dataset() if bcss_base == None else bcss_base, augmentation, seed
         )
