@@ -5,6 +5,7 @@ import random
 from ..types import OODAugmantation
 from ....data.datatypes import DistributionSampleType
 from ..utils import init_augmentation
+from ....data.samples import Sample
 
 
 class SampledOODAugmentation(OODAugmantation):
@@ -18,26 +19,26 @@ class SampledOODAugmentation(OODAugmantation):
         ), "Augmentation needs 'param_range_fn' method if you want to sample it"
         self.param_range = param_range_fn()
 
-    def __call__(self, img, mask, metadata=None):
-        mask, metadata = init_augmentation(img, mask, metadata)
+    def __call__(self, sample: Sample):
+        sample = init_augmentation(sample)
         self.sample_params()
         if self.skip:
             # if no augmentation is applied, data remains IN Distribution
-            metadata["type"] = DistributionSampleType.IN_DATA
-            return img, mask, metadata
+            sample.metadata["type"] = DistributionSampleType.IN_DATA
+            return sample
 
         i = 0
         while True:
             # if augmentation should be applied, try at most 10 times to get an OOD Sample
             # This my be necessary if the artifact is places outside the patch
-            _img, _mask, _metadata = self.augmentation(img, mask, metadata)
+            sample = self.augmentation(sample)
 
-            if _metadata["type"] is DistributionSampleType.OOD_DATA or i >= 10:
+            if sample.metadata["type"] is DistributionSampleType.OOD_DATA or i >= 10:
                 break
             self.sample_params()
             i += 1
 
-        return _img, _mask, _metadata
+        return sample
 
     def sample_params(self):
         if random.random() >= self.probability:

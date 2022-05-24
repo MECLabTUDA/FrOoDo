@@ -7,6 +7,7 @@ from ..interfaces import (
     MultiFileOverlappingTilesDataset,
 )
 from ....ood.augmentations import OODAugmantation
+from ..adapter.adapter import ImageLabelMetaAdapter
 
 
 class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, UtitlityDataset):
@@ -57,6 +58,14 @@ class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, UtitlityDataset):
         # for k, v in masks.items():
         #    masks[k] = self.resize(v.unsqueeze(0).unsqueeze(0)).squeeze()
         return img, masks
+
+
+class BCSS_Adapted_Datasets:
+    def __init__(self, size=(700, 700), split=(0.10, 0.20), **kwargs):
+        train, val, test = BCSS_Base_Dataset(size=size).get_train_val_test_set(*split)
+        self.train = ImageLabelMetaAdapter(train, ignore_index=5, **kwargs)
+        self.val = ImageLabelMetaAdapter(val, ignore_index=5, **kwargs)
+        self.test = ImageLabelMetaAdapter(test, ignore_index=5, **kwargs)
 
 
 class BCSS_OOD_Dataset(OODAugmentationDataset, UtitlityDataset):

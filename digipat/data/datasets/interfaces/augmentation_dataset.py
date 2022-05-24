@@ -3,17 +3,17 @@ import numpy as np
 
 import random
 
-from ....ood.augmentations import OODAugmantation, Nothing
-from ...datatypes import TaskType
+
+from ...samples import Sample
+
+from ....ood.augmentations import Augmantation, Nothing
+from ..adapter.adapter import DatasetAdapter
+from .utility_dataset import UtitlityDataset
 
 
-class OODAugmentationDataset(Dataset):
+class OODAugmentationDataset(Dataset, UtitlityDataset):
     def __init__(
-        self,
-        dataset: Dataset,
-        augmentation: OODAugmantation = None,
-        seed=None,
-        task_type: TaskType = TaskType.SEGMENTATION,
+        self, dataset: DatasetAdapter, augmentation: Augmantation = None, seed=None
     ) -> None:
         super().__init__()
         self.dataset = dataset
@@ -22,7 +22,6 @@ class OODAugmentationDataset(Dataset):
             self.pseudo_random = False
         else:
             self.init_seeds(seed)
-        self.task_type = task_type
 
     def init_seeds(self, seed=42):
         self.pseudo_random = True
@@ -30,29 +29,22 @@ class OODAugmentationDataset(Dataset):
         self.seeds = (np.random.random(len(self)) * 10000).astype(np.int64)
         np.random.seed()
 
-    def set_augmentation(self, augmentation: OODAugmantation):
+    def set_augmentation(self, augmentation: Augmantation):
         if augmentation == None:
             self.augmentation = Nothing()
             return
-        self.dataset.mode = "full_ood"
-        assert isinstance(augmentation, OODAugmantation)
+        assert isinstance(augmentation, Augmantation)
         self.augmentation = augmentation
 
-    def _apply_augmentations(self, *args):
-        if self.task_type is TaskType.SEGMENTATION:
-            return self.augmentation(*args)
-        elif self.task_type is TaskType.CLASSIFICATION:
-            # In case of classification the label is not a mask. Therefore for the augmentation a pseudo_mask is created to calculate severity
-            aug_args = args
-            aug_args[1] = None
-            _img, _, _metadata = self.augmentation(*aug_args)
-            return _img, args[1], _metadata
+    def _apply_augmentations(self, sample: Sample):
+        sample = self.augmentation(sample)
+        return sample
 
     def __getitem__(self, index):
         if self.pseudo_random:
             random.seed(self.seeds[index])
             np.random.seed(self.seeds[index])
-        return self._apply_augmentations(*self.dataset.__getitem__(index))
+        return self._apply_augmentations(self.dataset.__getitem__(index))
 
     def __len__(self):
         return len(self.dataset)

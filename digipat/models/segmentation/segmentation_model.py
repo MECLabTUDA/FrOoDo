@@ -2,8 +2,10 @@ import torch
 
 from .utils import *
 from .examples import UNet
+from .. import Model
 
-class SegmentationModel:
+
+class SegmentationModel(Model):
     def __init__(
         self,
         folder="UNet_noExtra_trainable_n16_d4_ADAM_bs16_lr0.0001_s20_g1_21",

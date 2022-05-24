@@ -96,7 +96,7 @@ def apply_mask_changes(
             ignore_index + 1
         )
         _mask = _mask - 1
-        masks["segmantation_mask"] = to_tensor(_mask.astype(np.longlong), True)
+        masks["segmentation_mask"] = to_tensor(_mask.astype(np.longlong), True)
 
     if "ood" in mode or "full_ood" in mode:
         _mask = mask.copy()

@@ -36,7 +36,7 @@ class OverlapAugmentation(OODAugmantation, SizeAugmentation):
 
         per_img = sample.image.permute(1, 2, 0)
 
-        overlay = int(random.uniform(10, 50))
+        overlay = int(random.uniform(10, 200))
         # overlay = 10
         shuffle = 3
         sigma = 1.5
@@ -80,10 +80,14 @@ class OverlapAugmentation(OODAugmantation, SizeAugmentation):
             if sample["ood_mask"] != None:
                 sample["ood_mask"][:, start : start + overlay] = 0
                 sample["ood_mask"] = sample["ood_mask"][:, :-overlay]
+                # dummy
+                sample["segmentation_mask"] = torch.ones_like(sample["ood_mask"])
         else:
             if sample["ood_mask"] != None:
                 sample["ood_mask"][start : start + overlay :] = 0
                 sample["ood_mask"] = sample["ood_mask"][:-overlay, :]
+                # dummy
+                sample["segmentation_mask"] = torch.ones_like(sample["ood_mask"])
 
         sample.image = result.permute(2, 0, 1)
 

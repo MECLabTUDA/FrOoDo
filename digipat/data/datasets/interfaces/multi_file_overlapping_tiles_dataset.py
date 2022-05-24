@@ -8,6 +8,7 @@ from os import listdir
 from pathlib import Path
 import json
 import imageio
+import copy
 
 from ..utils import *
 
@@ -81,15 +82,16 @@ class MultiFileOverlappingTilesDataset(Dataset):
             self.files = masks
 
         # Load tile file
-        self.tiles, self.valid = self.get_tile_file(
-            self._get_filename(),
-            self.files,
-            {},
-            force_overwrite,
-        )
+        self._set_tiles(self.files, {}, force_overwrite)
 
     def set_mode(self, mode):
         self.mode = mode
+
+    def _set_tiles(self, files, config, force_overwrite=False):
+        self.tiles, self.valid = self.get_tile_file(
+            self._get_filename(), files, config, force_overwrite
+        )
+        return self
 
     def _get_filename(self):
         return f"{self.dataset_name}_{self.size[0]}_{self.size[1]}_{self.overlap}_{self.non_ignore_threshold}_mask.json"
@@ -130,6 +132,23 @@ class MultiFileOverlappingTilesDataset(Dataset):
         # print(f"Loaded tile file {file}")
 
         return self._parse_data(raw_tile_file["data"], files)
+
+    def get_train_val_test_set(self, val_per=0.15, test_per=0.15, seed=42):
+
+        random.Random(seed).shuffle(self.files)
+
+        split_val = int(np.floor(val_per * len(self.files)))
+        split_test = int(np.floor(test_per * len(self.files)))
+        train_files, val_files, test_files = (
+            self.files[split_val + split_test :],
+            self.files[:split_val],
+            self.files[split_val : split_val + split_test],
+        )
+        return (
+            copy.deepcopy(self)._set_tiles(train_files, {}),
+            copy.deepcopy(self)._set_tiles(val_files, {}),
+            copy.deepcopy(self)._set_tiles(test_files, {}),
+        )
 
     def save_valid_regions(self, filename, data, config):
         file = join(self.tile_folder, self.dataset_name, filename)

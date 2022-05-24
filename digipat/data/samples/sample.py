@@ -22,7 +22,7 @@ class Sample:
             self.label_dict[k] = v
 
     def add_segmentation_mask(self, mask: torch.Tensor):
-        self.label_dict["segmantation_mask"] = mask
+        self.label_dict["segmentation_mask"] = mask
 
     def add_ood_mask(self, mask: torch.Tensor):
         self.label_dict["ood_mask"] = mask

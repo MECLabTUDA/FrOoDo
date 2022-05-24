@@ -40,6 +40,8 @@ class ImageLabelMetaAdapter(DatasetAdapter):
     def __getitem__(self, index) -> Sample:
         data = self.dataset.__getitem__(index)
         meta = data[2] if len(data) == 3 else None
+        # if meta == None:
+        #    print("No metadata mapping is giving. System will create blank metdata.")
         sample = Sample(data[0], data[1], meta)
         sample = self._add_metadata_args(sample)
         return sample

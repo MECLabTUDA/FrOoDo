@@ -1,6 +1,7 @@
 import random
 
 from ...augmentations import OODAugmantation
+from ....data.samples import Sample
 
 
 class ProbabilityAugmentation(OODAugmantation):
@@ -10,11 +11,10 @@ class ProbabilityAugmentation(OODAugmantation):
         self.augmentation = augmentation
         self.prob = prob
 
-    def __call__(self, img, mask):
+    def __call__(self, sample: Sample):
         if random.random() >= self.prob:
-            return img, mask
-        else:
-            return self.augmentation(img, mask)
+            return sample
+        return self.augmentation(sample)
 
 
 class Nothing(OODAugmantation):
