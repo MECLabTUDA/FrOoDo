@@ -25,9 +25,7 @@ class Augmantation:
         )
 
         # set DistributionSampleType
-        if severity.get_bin(ignore_true_bin=True) == -1:
-            sample["metadata"].type = DistributionSampleType.IN_DATA
-        else:
+        if severity.get_bin(ignore_true_bin=True) != -1:
             sample["metadata"].type = DistributionSampleType.OOD_DATA
             sample["metadata"][
                 SampleMetadataCommonTypes.OOD_REASON.name

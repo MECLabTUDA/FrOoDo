@@ -4,10 +4,10 @@ import copy
 from typing import Dict
 
 from ...samples import Sample
-from ..interfaces import UtitlityDataset
+from ..interfaces import SampleDataset
 
 
-class DatasetAdapter(Dataset, UtitlityDataset):
+class DatasetAdapter(Dataset, SampleDataset):
     def __init__(self, dataset, **kwargs) -> None:
         self.dataset = dataset
         self.metadata_args = kwargs

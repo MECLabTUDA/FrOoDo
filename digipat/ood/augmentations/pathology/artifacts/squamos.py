@@ -7,6 +7,7 @@ from ....augmentations import OODAugmantation, SampledOODAugmentation
 from .artifacts import ArtifactAugmentation, data_folder
 from .....ood.severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
 from .....data.datatypes import DistributionSampleType
+from .....data.samples import Sample
 
 
 class SquamousAugmentation(OODAugmantation, ArtifactAugmentation):
@@ -16,11 +17,13 @@ class SquamousAugmentation(OODAugmantation, ArtifactAugmentation):
         path=None,
         severity: SeverityMeasurement = None,
         mask_threshold=0.3,
+        keep_ignorred=True,
     ) -> None:
         super().__init__()
         self.scale = scale
         self.path = path
         self.mask_threshold = mask_threshold
+        self.keep_ignorred = keep_ignorred
         self.severity_class: SeverityMeasurement = (
             PixelPercentageSeverityMeasurement() if severity == None else severity
         )
@@ -28,10 +31,10 @@ class SquamousAugmentation(OODAugmantation, ArtifactAugmentation):
     def param_range(self):
         return {"scale": (0.1, 4)}
 
-    def squamous_preproces(self, img, mask):
-        return super().transparentOverlay(
-            img,
-            mask,
+    def _augment(self, sample: Sample) -> Sample:
+        img, mask = super().transparentOverlay(
+            sample["image"],
+            sample["ood_mask"],
             scale=self.scale,
             overlay_path=join(
                 data_folder,
@@ -42,21 +45,11 @@ class SquamousAugmentation(OODAugmantation, ArtifactAugmentation):
             mask_threshold=self.mask_threshold,
             width_slack=(-0.1, -0.1),
             height_slack=(-0.1, -0.1),
+            ignore_index=None
+            if not self.keep_ignorred
+            else sample.metadata["ignore_index"],
         )
+        sample["image"] = img
+        sample["ood_mask"] = mask
 
-    def __call__(self, img, mask):
-        img, mask = self.squamous_preproces(img, mask)
-
-        severity: SeverityMeasurement = deepcopy(self.severity_class)
-        severity.calculate_measurement(img, mask, {"scale": self.scale})
-
-        return (
-            img,
-            mask,
-            {
-                "type": DistributionSampleType.IN_DISTRIBUTION_DATA
-                if severity.get_bin(ignore_true_bin=True) == -1
-                else DistributionSampleType.AUGMENTATION_OOD_DATA,
-                "severity": severity,
-            },
-        )
+        return sample

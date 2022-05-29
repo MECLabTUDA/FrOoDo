@@ -1,19 +1,12 @@
 from typing import List
-from .requirements import ContainerRequirements
 
 
 class Container:
-    def __init__(self) -> None:
-        if ContainerRequirements.METADATA in self.data_requirements():
-            self.metadata = []
-
-    def data_requirements(self) -> List[ContainerRequirements]:
+    def data_requirements(self) -> List[str]:
         raise NotImplementedError("Please Implement this method")
 
     def append(self, data: dict):
-        for key, val in data.items():
-            if key == ContainerRequirements.METADATA:
-                self.metadata.extend(val)
+        raise NotImplementedError("Please Implement this method")
 
     def process(self):
         raise NotImplementedError("Please Implement this method")

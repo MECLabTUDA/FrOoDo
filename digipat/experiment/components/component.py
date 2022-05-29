@@ -1,15 +1,9 @@
 class Component:
-    def __init__(self) -> None:
-        pass
-
     def sanity_check(self):
-        pass
+        raise NotImplementedError("Please Implement this method")
 
     def __call__(self):
-        pass
+        raise NotImplementedError("Please Implement this method")
 
-    def track(self):
-        pass
-
-    def save(self):
-        pass
+    def create_artifact(self):
+        raise NotImplementedError("Please Implement this method")

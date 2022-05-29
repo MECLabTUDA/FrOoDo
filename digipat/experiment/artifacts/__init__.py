@@ -1,0 +1,1 @@
+from .artifact import ComponentArtifact

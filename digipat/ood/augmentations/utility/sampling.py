@@ -23,8 +23,6 @@ class SampledOODAugmentation(OODAugmantation):
         sample = init_augmentation(sample)
         self.sample_params()
         if self.skip:
-            # if no augmentation is applied, data remains IN Distribution
-            sample.metadata["type"] = DistributionSampleType.IN_DATA
             return sample
 
         i = 0

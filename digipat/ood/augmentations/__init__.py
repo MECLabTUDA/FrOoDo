@@ -8,6 +8,8 @@ from .utility import (
     ProbabilityAugmentation,
     Nothing,
     SampledOODAugmentation,
+    AugmentationPipeline,
+    SizeInOODPipeline,
 )
 
 from .pathology.artifacts import (
@@ -23,3 +25,5 @@ from .patchwise import (
     CropAugmentation,
     GaussianBlurAugmentation,
 )
+
+from .indistribution import *

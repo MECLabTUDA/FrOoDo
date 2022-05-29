@@ -3,14 +3,14 @@ from torchvision.transforms import Resize
 
 from ..interfaces import (
     OODAugmentationDataset,
-    UtitlityDataset,
+    SampleDataset,
     MultiFileOverlappingTilesDataset,
 )
-from ....ood.augmentations import OODAugmantation
-from ..adapter.adapter import ImageLabelMetaAdapter
+from ....ood.augmentations import OODAugmantation, InCrop, InResize, SizeInOODPipeline
+from ..adapter.adapter import AlreadyASampleAdapter, ImageLabelMetaAdapter
 
 
-class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, UtitlityDataset):
+class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, SampleDataset):
     def __init__(
         self,
         folder="D:\ssl4uc\Original Data\BCSS_TIF",
@@ -68,7 +68,26 @@ class BCSS_Adapted_Datasets:
         self.test = ImageLabelMetaAdapter(test, ignore_index=5, **kwargs)
 
 
-class BCSS_OOD_Dataset(OODAugmentationDataset, UtitlityDataset):
+class BCSS_Adapted_Cropped_Resized_Datasets:
+    def __init__(self, size=(700, 700), split=(0.10, 0.20), **kwargs):
+        train, val, test = BCSS_Base_Dataset(size=size).get_train_val_test_set(*split)
+        pipeline = SizeInOODPipeline(
+            in_augmentations=[InCrop((600, 600)), InResize(resize_size=(300, 300))]
+        )
+        self.train = OODAugmentationDataset(
+            ImageLabelMetaAdapter(train, ignore_index=5, **kwargs), pipeline
+        )
+
+        self.val = OODAugmentationDataset(
+            ImageLabelMetaAdapter(val, ignore_index=5, **kwargs), pipeline
+        )
+
+        self.test = OODAugmentationDataset(
+            ImageLabelMetaAdapter(test, ignore_index=5, **kwargs), pipeline
+        )
+
+
+class BCSS_OOD_Dataset(OODAugmentationDataset, SampleDataset):
     def __init__(
         self,
         bcss_base: BCSS_Base_Dataset = None,

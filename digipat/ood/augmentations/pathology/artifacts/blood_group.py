@@ -11,12 +11,12 @@ from ...utils import *
 from .....data.samples import Sample
 
 
-class DarkSpotsAugmentation(ArtifactAugmentation, OODAugmantation):
+class BloodGroupAugmentation(ArtifactAugmentation, OODAugmantation):
     def __init__(
         self,
         scale=1,
         severity: SeverityMeasurement = None,
-        path=join(data_folder, "dark_spots/small_spot.png"),
+        path=None,
         mask_threshold=0.5,
         sample_range=None,
         keep_ignorred=True,
@@ -29,7 +29,7 @@ class DarkSpotsAugmentation(ArtifactAugmentation, OODAugmantation):
             PixelPercentageSeverityMeasurement() if severity == None else severity
         )
         if sample_range == None:
-            self.sample_range = {"scale": (0.1, 5)}
+            self.sample_range = {"scale": (0.9, 1.1)}
         else:
             self.sample_range = sample_range
         self.keep_ignorred = keep_ignorred
@@ -44,8 +44,10 @@ class DarkSpotsAugmentation(ArtifactAugmentation, OODAugmantation):
             scale=self.scale,
             mask_threshold=self.mask_threshold,
             overlay_path=join(
-                data_folder,
-                f"dark_spots/{random.choice(listdir(join(data_folder,'dark_spots')))}",
+                "D:\OOD_Data\BCSS\ood-ness\Artefacts\Blood\group",
+                random.choice(
+                    listdir("D:\OOD_Data\BCSS\ood-ness\Artefacts\Blood\group")
+                ),
             )
             if self.path == None
             else self.path,

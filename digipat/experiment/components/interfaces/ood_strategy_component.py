@@ -4,34 +4,45 @@ import numpy as np
 
 from typing import List
 
+from ..metadata import ComponentMetadata
 from .. import Component
+from ...artifacts.metric_artifact import MetricArtifact
+from ....data.datasets.interfaces.utility_dataset import SampleDataset
 from ....data.metadata import SampleMetadataCommonTypes
 from ....models import Model
-from ....ood.metrics import infer_container, Metric
-from ....ood.methods import OODMethod
+from ....ood.metrics import infer_container, Metric, OODAuRoC
+from ....ood.methods import OODMethod, MaxClassBaseline, ODIN, EnergyBased
 from ....ood.strategies import OODStrategy
-from ....data.container import ContainerRequirements
 
 
 class OODStreatgyComponent(Component):
     def __init__(
         self,
         strategy: OODStrategy,
-        methods: List[OODMethod],
-        metrics: List[Metric],
         model: Model,
+        methods: List[OODMethod] = None,
+        metrics: List[Metric] = None,
         seed: int = None,
     ) -> None:
         super().__init__()
         self.strategy = strategy
-        self.methods = methods
-        self.metrics = metrics
         self.model = model
+        self.methods = methods
+        if self.methods == None:
+            self.methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
+        self.metrics = metrics
+        if self.metrics == None:
+            self.metrics = [OODAuRoC()]
         self.seed = seed
+        self.metadata = ComponentMetadata({})
+
+    def sanity_check(self):
+        return super().sanity_check()
 
     def __call__(self):
 
-        self.strategy.dataset.sample(10)
+        if isinstance(self.strategy.dataset, SampleDataset):
+            self.strategy.dataset.sample(10)
 
         # create data container based on the metric requirements
         container = infer_container(self.metrics)
@@ -40,7 +51,7 @@ class OODStreatgyComponent(Component):
             torch.manual_seed(1234)
 
         for batch in tqdm(
-            self.strategy.get_dataloader(batch_size=16, num_workers=8, shuffle=True),
+            self.strategy.get_dataloader(batch_size=16, num_workers=8, shuffle=False),
             "OOD Evaluation",
         ):
 
@@ -54,7 +65,7 @@ class OODStreatgyComponent(Component):
                 )
 
             for c in container:
-                c.append({ContainerRequirements.METADATA: batch["metadata"].batch})
+                c.append({"BATCH": batch})
 
         for c in container:
             c.process()
@@ -62,3 +73,6 @@ class OODStreatgyComponent(Component):
         for m in self.metrics:
             m(container, {})
             m.present()
+
+    def create_artifact(self):
+        return MetricArtifact(self)
