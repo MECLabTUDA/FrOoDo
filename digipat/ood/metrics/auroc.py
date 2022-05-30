@@ -25,6 +25,7 @@ class OODAuRoC(MetricGroup):
         return [MetadataContainer]
 
     def __call__(self, data_container: List[Container], experiment_metadata: dict):
+        self.component_metadata = experiment_metadata
         metaframe: pd.DataFrame = data_container[0].metaframe.copy()
         self.score_colums = [
             col
@@ -88,10 +89,14 @@ class OODAuRoC(MetricGroup):
         else:
             for i in range(len(self.score_colums)):
                 plt.plot(
-                    self.group_keys,
+                    np.array(list(self.group_keys)) / self.num_bins + 1 / self.num_bins,
                     self.value[i],
-                    label=self.score_colums,
+                    label=type(self.component_metadata["methods"][i]).__name__,
                 )
+                plt.ylabel("AuRoC")
+                plt.xlabel("Severity")
+
+            plt.legend()
             plt.show()
 
 

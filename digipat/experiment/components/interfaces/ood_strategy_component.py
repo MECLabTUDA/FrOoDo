@@ -4,15 +4,17 @@ import numpy as np
 
 from typing import List
 
+
 from ..metadata import ComponentMetadata
 from .. import Component
-from ...artifacts.metric_artifact import MetricArtifact
+from ...artifacts import MetricArtifact, ContainerArtifact
 from ....data.datasets.interfaces.utility_dataset import SampleDataset
 from ....data.metadata import SampleMetadataCommonTypes
 from ....models import Model
 from ....ood.metrics import infer_container, Metric, OODAuRoC
 from ....ood.methods import OODMethod, MaxClassBaseline, ODIN, EnergyBased
 from ....ood.strategies import OODStrategy
+from ....experiment.artifacts.storage import ArtifactStorage
 
 
 class OODStreatgyComponent(Component):
@@ -23,8 +25,9 @@ class OODStreatgyComponent(Component):
         methods: List[OODMethod] = None,
         metrics: List[Metric] = None,
         seed: int = None,
+        overwrite_from_artifacts=True,
     ) -> None:
-        super().__init__()
+        super().__init__(overwrite_from_artifacts)
         self.strategy = strategy
         self.model = model
         self.methods = methods
@@ -34,10 +37,15 @@ class OODStreatgyComponent(Component):
         if self.metrics == None:
             self.metrics = [OODAuRoC()]
         self.seed = seed
-        self.metadata = ComponentMetadata({})
+        self.metadata = ComponentMetadata(
+            {"strategy": self.strategy, "methods": self.methods, "seed": self.seed}
+        )
 
     def sanity_check(self):
         return super().sanity_check()
+
+    def load_from_artifact_storage(self, storage: ArtifactStorage):
+        self.methods.extend(storage.get_latest("methods"))
 
     def __call__(self):
 
@@ -48,7 +56,7 @@ class OODStreatgyComponent(Component):
         container = infer_container(self.metrics)
 
         if self.seed != None:
-            torch.manual_seed(1234)
+            torch.manual_seed(self.seed)
 
         for batch in tqdm(
             self.strategy.get_dataloader(batch_size=16, num_workers=8, shuffle=False),
@@ -71,8 +79,8 @@ class OODStreatgyComponent(Component):
             c.process()
 
         for m in self.metrics:
-            m(container, {})
+            m(container, self.metadata)
             m.present()
 
-    def create_artifact(self):
-        return MetricArtifact(self)
+        self.artifacts["container"] = [ContainerArtifact(c) for c in container]
+        self.artifacts["metrics"] = [MetricArtifact(m) for m in self.metrics]

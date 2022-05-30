@@ -1,6 +1,3 @@
-import torch
-
-from .metadata import SampleMetdadataBatch
 from .samples import Batch
 
 
