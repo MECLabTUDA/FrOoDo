@@ -1,6 +1,10 @@
 # FrODo - Framework for Out of Distribution Detection
 
 ## Requirements
+- torch
+- numpy
+- pandas
+- 
 
 ## Samples and Batches and Metadata
 To make this a flexible framework it is necesarry to uniform the datatypes used internally. 
@@ -36,12 +40,12 @@ dataset = my dataset
 adapter = ImageLabelMetaAdapter(dataset)
 
 # use this dapter if your dataset returns a tuple of tensors
-adapter = PositionalAdapter(dataset, remapping = {"image": 0, "segmantation_mask": 1})
+adapter = PositionalAdapter(dataset, remapping = {"image": 0, "segmentation_mask": 1})
 
 # use this adapter if your dataset returns a dictionary
 adapter = DatasetWithAllInOneDictAdapter(dataset, remapping= {
     "image": "img",
-    "segmantation_mask": "mask"
+    "segmentation_mask": "mask"
 })
 
 # use utility function to create mapping
@@ -73,39 +77,5 @@ component = AugmentationOODEvaluationComponent(
 component()
 ```
 
-## Add new MetricGroup
-
-```python
-class MetricGroup:
-    def __init__(self) -> None:
-        pass
-
-    def requires(self) -> List[Container]:
-        raise NotImplementedError("Please Implement this method")
-
-    def __call__(self, data_container: List[Container], experiment_metadata: dict):
-        raise NotImplementedError("Please Implement this method")
-
-    def present(self, **kwargs):
-        pass
-```
-
-## Add new Method
-
-```python
-class OODMethod:
-    def __init__(self, hyperparams={}) -> None:
-        self.name = "set name"
-
-    def __call__(self, imgs, masks, net):
-        raise NotImplementedError("Please Implement this method")
-
-    def modify_net(self, net):
-        return net
-
-    def get_params(self, dict=False):
-        return "no params" if not dict else {}
-
-```
 
 ## General Usage

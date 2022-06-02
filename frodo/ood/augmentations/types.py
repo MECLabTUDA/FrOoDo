@@ -13,16 +13,20 @@ from ...data.samples import Sample
 
 
 class Augmantation:
-    def _augment(self, sample: Sample) -> Tuple[Tensor, Tensor]:
+    def _augment(self, sample: Sample) -> Sample:
         raise NotImplementedError("Please Implement this method")
 
-    def _set_metadata(self, sample: Sample) -> Sample:
-
+    def _set_severity(self, sample: Sample) -> SeverityMeasurement:
         # set severity measurement
         severity: SeverityMeasurement = deepcopy(self.severity_class)
         severity.calculate_measurement(
             sample["image"], sample["ood_mask"], {"scale": self.scale}
         )
+        return severity
+
+    def _set_metadata(self, sample: Sample) -> Sample:
+
+        severity = self._set_severity(sample)
 
         # set DistributionSampleType
         if severity.get_bin(ignore_true_bin=True) != -1:
@@ -58,10 +62,10 @@ class Augmantation:
 
 
 class OODAugmantation(Augmantation):
-    def do_random(self, img, mask, augmentation):
+    def do_random(self, sample: Sample, augmentation):
         if random.random() >= self.prob:
-            return img, mask
-        return augmentation(img), torch.zeros_like(mask)
+            return sample
+        return augmentation(sample)
 
 
 class AugmentationComposite(OODAugmantation):

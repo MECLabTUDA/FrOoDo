@@ -1,12 +1,18 @@
 from typing import List
 
-from ..types import Augmantation, INAugmantation, OODAugmantation, SizeAugmentation
+from ..types import (
+    Augmantation,
+    INAugmantation,
+    OODAugmantation,
+    SizeAugmentation,
+    AugmentationComposite,
+)
 from ....data.samples import Sample
 
 
-class AugmentationPipeline(Augmantation):
-    def __init__(self, augmentations) -> None:
-        self.augmentations = augmentations
+class AugmentationPipeline(AugmentationComposite):
+    def __init__(self, augmantations) -> None:
+        super().__init__(augmantations)
 
     def __call__(self, sample: Sample) -> Sample:
         for a in self.augmentations:

@@ -82,7 +82,10 @@ class OODAuRoC(MetricGroup):
             else:
                 print(
                     tabulate(
-                        [[b, self.value[i]] for i, b in enumerate(self.score_colums)],
+                        [
+                            [f"{b.display_name()} {b.get_params()}", self.value[i]]
+                            for i, b in enumerate(self.component_metadata["methods"])
+                        ],
                         headers=["Name", "AUC"],
                     )
                 )
@@ -106,7 +109,7 @@ class AUROCMetric(Metric):
 
     def __call__(self, labels, scores):
         self.value = roc_auc_score(
-            labels[~np.isnan(labels)],
+            labels[~np.isnan(scores)],
             scores[~np.isnan(scores)],
         )
         return self.value

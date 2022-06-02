@@ -10,6 +10,7 @@ from .. import Component
 from ...artifacts import MetricArtifact, ContainerArtifact
 from ....data.datasets.interfaces.utility_dataset import SampleDataset
 from ....data.metadata import SampleMetadataCommonTypes
+from ....data.datatypes import TaskType
 from ....models import Model
 from ....ood.metrics import infer_container, Metric, OODAuRoC
 from ....ood.methods import OODMethod, MaxClassBaseline, ODIN, EnergyBased
@@ -25,6 +26,7 @@ class OODStreatgyComponent(Component):
         methods: List[OODMethod] = None,
         metrics: List[Metric] = None,
         seed: int = None,
+        task_type: TaskType = TaskType.SEGMENTATION,
         overwrite_from_artifacts=True,
     ) -> None:
         super().__init__(overwrite_from_artifacts)
@@ -37,6 +39,8 @@ class OODStreatgyComponent(Component):
         if self.metrics == None:
             self.metrics = [OODAuRoC()]
         self.seed = seed
+        assert isinstance(task_type, TaskType)
+        self.task_type = task_type
         self.metadata = ComponentMetadata(
             {"strategy": self.strategy, "methods": self.methods, "seed": self.seed}
         )
@@ -63,14 +67,8 @@ class OODStreatgyComponent(Component):
             "OOD Evaluation",
         ):
 
-            for index, m in enumerate(self.methods):
-                scores = m(batch["image"], batch["ood_mask"], self.model)
-                scores = np.mean(scores, tuple(range(1, scores.ndim)))
-                batch["metadata"].append_to_keyed_dict(
-                    SampleMetadataCommonTypes.OOD_SCORE.name,
-                    f"{index}_{type(m).__name__}",
-                    scores,
-                )
+            for m in self.methods:
+                batch = m(batch, self.model, task_type=self.task_type)
 
             for c in container:
                 c.append({"BATCH": batch})

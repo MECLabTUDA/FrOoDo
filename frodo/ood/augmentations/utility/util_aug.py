@@ -11,7 +11,7 @@ class ProbabilityAugmentation(OODAugmantation):
         self.augmentation = augmentation
         self.prob = prob
 
-    def __call__(self, sample: Sample):
+    def __call__(self, sample: Sample) -> Sample:
         if random.random() >= self.prob:
             return sample
         return self.augmentation(sample)
@@ -21,8 +21,8 @@ class Nothing(OODAugmantation):
     def __init__(self) -> None:
         super().__init__()
 
-    def __call__(self, img, mask):
-        return img, mask
+    def __call__(self, sample: Sample) -> Sample:
+        return sample
 
 
 class NTimesAugmentation(OODAugmantation):
@@ -31,7 +31,7 @@ class NTimesAugmentation(OODAugmantation):
         self.augmentation = augmentation
         self.n = n
 
-    def __call__(self, img, mask):
+    def __call__(self, sample: Sample) -> Sample:
         for _ in range(self.n):
-            img, mask = self.augmentation(img, mask)
-        return img, mask
+            sample = a(sample)
+        return sample

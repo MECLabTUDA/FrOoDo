@@ -10,7 +10,6 @@ class ODIN(OODMethod):
         self.temperature = hyperparams["temperature"]
         self.noise = hyperparams["noise"]
         self.criterion = torch.nn.CrossEntropyLoss()
-        self.name = "ODIN"
 
     def get_params(self, dict=False):
         if dict:
@@ -36,9 +35,9 @@ class ODIN(OODMethod):
         outputs = outputs / self.temperature
         return outputs
 
-    def __call__(self, imgs, masks, net):
+    def calculate_ood_score(self, imgs, net, batch=None):
         outputs = self._temp_and_pertubate(imgs, net)
         outputs = outputs - torch.max(outputs, axis=1)[0].unsqueeze(1)
         scores = torch.softmax(outputs.data, dim=1)
         m, _ = torch.max(scores, axis=1)
-        return m.detach().cpu().numpy()
+        return m.detach().cpu()
