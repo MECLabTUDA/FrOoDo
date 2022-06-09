@@ -3,7 +3,7 @@ from os import listdir
 from os.path import join
 
 
-from ....augmentations import OODAugmantation
+from ....augmentations import OODAugmentation
 from .artifacts import ArtifactAugmentation, data_folder
 from .....ood.severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
 from .....data.metadata import *
@@ -11,7 +11,7 @@ from ...utils import *
 from .....data.samples import Sample
 
 
-class BloodCellAugmentation(ArtifactAugmentation, OODAugmantation):
+class BloodCellAugmentation(ArtifactAugmentation, OODAugmentation):
     def __init__(
         self,
         scale=1,

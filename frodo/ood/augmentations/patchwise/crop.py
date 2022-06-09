@@ -3,35 +3,49 @@ from torchvision.transforms import RandomCrop, Resize
 
 import random
 
-from ...augmentations import OODAugmantation
+from ...augmentations import OODAugmentation, SampableAugmentation, InCrop, InResize
+from ....data import Sample
+from ...severity import ParameterSeverityMeasurement, SeverityMeasurement
+from ..utils import full_image_ood
 
 
-class CropAugmentation(OODAugmantation):
-    def __init__(self, crop=(150, 150), prob=1) -> None:
+class ZoomInAugmentation(OODAugmentation, SampableAugmentation):
+    def __init__(
+        self,
+        crop=0.5,
+        sample_intervals=None,
+        severity: SeverityMeasurement = None,
+        keep_ignorred=True,
+    ) -> None:
         super().__init__()
-        self.prob = prob
+        assert crop > 0 and crop <= 1
         self.crop = crop
-
-    @property
-    def crop(self):
-        return self._crop
-
-    @crop.setter
-    def crop(self, value):
-        if type(value) == tuple:
-            self._crop = value
-        elif type(value) == float or type(value) == int:
-            assert value >= 0 and value <= 1
-            self._crop = (round(value * 300), round(value * 300))
-
-    def random_crop(self, img, mask, prob, crop):
-        if random.random() >= prob:
-            return img, mask
-        cropping = RandomCrop(size=crop)
-        resize = Resize(
-            (300, 300),
+        if sample_intervals == None:
+            self.sample_intervals = [(0.2, 0.9)]
+        else:
+            self.sample_intervals = sample_intervals
+        self.severity_class = (
+            ParameterSeverityMeasurement(
+                "crop", (self.sample_intervals[0][0], self.sample_intervals[-1][1])
+            )
+            if severity == None
+            else severity
         )
-        return resize(cropping(img)), torch.zeros_like(mask)
+        self.keep_ignorred = keep_ignorred
 
-    def __call__(self, img, mask):
-        return self.random_crop(img, mask, self.prob, self.crop)
+    def _get_parameter_dict(self):
+        return {"crop": self.crop}
+
+    def _apply_sampling(self):
+        return super()._set_attr_to_uniform_samples_from_intervals(
+            {"crop": self.sample_intervals}
+        )
+
+    def _augment(self, sample: Sample) -> Sample:
+
+        _, h, w = sample.image.shape
+        sample = InCrop((round(self.crop * h), round(self.crop * w)))(sample)
+        sample = InResize((h, w))(sample)
+
+        sample = full_image_ood(sample, self.keep_ignorred)
+        return sample

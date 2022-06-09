@@ -4,7 +4,7 @@ from typing import List
 
 from ...metadata.types import SampleMetadataCommonTypes
 from ...samples import Sample
-from ....ood.augmentations import Augmantation, Nothing
+from ....ood.augmentations import Augmentation, Nothing
 from ..adapter.adapter import DatasetAdapter
 from .utility_dataset import SampleDataset
 from ..adapter import DatasetAdapter

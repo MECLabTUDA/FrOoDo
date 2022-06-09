@@ -40,7 +40,7 @@ class OODMethod:
         batch: Batch,
         net,
         task_type: TaskType = TaskType.SEGMENTATION,
-        remove_ignore_index: bool = True,
+        remove_ignore_index: bool = False,
         score_reduction_method: Callable = np.mean,
     ) -> Sample:
         # modify network if needed

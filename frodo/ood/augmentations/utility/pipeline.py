@@ -1,9 +1,11 @@
 from typing import List
 
+from ..indistribution.crop import InCrop
+from ..indistribution.resize import InResize
 from ..types import (
-    Augmantation,
-    INAugmantation,
-    OODAugmantation,
+    Augmentation,
+    INAugmentation,
+    OODAugmentation,
     SizeAugmentation,
     AugmentationComposite,
 )
@@ -11,8 +13,8 @@ from ....data.samples import Sample
 
 
 class AugmentationPipeline(AugmentationComposite):
-    def __init__(self, augmantations) -> None:
-        super().__init__(augmantations)
+    def __init__(self, Augmentations) -> None:
+        super().__init__(Augmentations)
 
     def __call__(self, sample: Sample) -> Sample:
         for a in self.augmentations:
@@ -24,8 +26,11 @@ class SizeInOODPipeline(AugmentationPipeline):
     def __init__(
         self,
         size_augmentations: List[SizeAugmentation] = None,
-        in_augmentations: List[INAugmantation] = None,
-        ood_augmentations: List[OODAugmantation] = None,
+        in_augmentations: List[INAugmentation] = [
+            InCrop((600, 600)),
+            InResize((300, 300)),
+        ],
+        ood_augmentations: List[OODAugmentation] = None,
     ) -> None:
         super().__init__(
             (size_augmentations if size_augmentations != None else [])

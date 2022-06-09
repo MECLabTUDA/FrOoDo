@@ -6,7 +6,7 @@ import random
 
 from ...samples import Sample
 
-from ....ood.augmentations import Augmantation, Nothing
+from ....ood.augmentations import Augmentation, Nothing
 from ..adapter.adapter import DatasetAdapter
 from .utility_dataset import SampleDataset
 from ..adapter import DatasetAdapter
@@ -14,7 +14,7 @@ from ..adapter import DatasetAdapter
 
 class OODAugmentationDataset(Dataset, SampleDataset):
     def __init__(
-        self, dataset: SampleDataset, augmentation: Augmantation = None, seed=None
+        self, dataset: SampleDataset, augmentation: Augmentation = None, seed=None
     ) -> None:
         super().__init__()
         self.dataset = dataset
@@ -30,11 +30,11 @@ class OODAugmentationDataset(Dataset, SampleDataset):
         self.seeds = (np.random.random(len(self)) * 10000).astype(np.int64)
         np.random.seed()
 
-    def set_augmentation(self, augmentation: Augmantation):
+    def set_augmentation(self, augmentation: Augmentation):
         if augmentation == None:
             self.augmentation = Nothing()
             return
-        assert isinstance(augmentation, Augmantation)
+        assert isinstance(augmentation, Augmentation)
         self.augmentation = augmentation
 
     def _apply_augmentations(self, sample: Sample):

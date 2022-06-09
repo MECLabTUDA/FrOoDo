@@ -2,22 +2,19 @@ import numpy as np
 
 import random
 
-from ..types import OODAugmantation
+from ..types import Augmentation, SampableAugmentation
 from ....data.datatypes import DistributionSampleType
-from ..utils import init_augmentation
 from ....data.samples import Sample
+from ..utils import init_augmentation
 
 
-class SampledOODAugmentation(OODAugmantation):
-    def __init__(self, augmentation: OODAugmantation, probability=0.7) -> None:
-        self.augmentation = augmentation
+class AugmentationSampling(Augmentation):
+    def __init__(self, augmentation: SampableAugmentation, probability=0.7) -> None:
+        assert isinstance(
+            augmentation, SampableAugmentation
+        ), "Augmentation that should be sampled needs to be instance of SampableAugmentation"
+        self.augmentation: SampableAugmentation = augmentation
         self.probability = probability
-
-        param_range_fn = getattr(self.augmentation, "param_range", None)
-        assert callable(
-            param_range_fn
-        ), "Augmentation needs 'param_range_fn' method if you want to sample it"
-        self.param_range = param_range_fn()
 
     def __call__(self, sample: Sample):
         sample = init_augmentation(sample)
@@ -45,8 +42,4 @@ class SampledOODAugmentation(OODAugmantation):
         else:
             self.skip = False
 
-        self.sample = {}
-        for key, (min_value, max_value) in self.param_range.items():
-            s = np.random.uniform(min_value, max_value)
-            self.sample[key] = s
-            setattr(self.augmentation, key, s)
+        self.augmentation._apply_sampling()

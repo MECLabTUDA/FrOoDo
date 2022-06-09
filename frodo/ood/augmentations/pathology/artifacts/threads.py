@@ -3,33 +3,40 @@ from os import listdir
 from os.path import join
 from copy import deepcopy
 
-from ....augmentations import OODAugmantation, SampledOODAugmentation
+from ....augmentations import OODAugmentation, SampableAugmentation
 from .artifacts import ArtifactAugmentation, data_folder
 from .....ood.severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
 from .....data.datatypes import DistributionSampleType
 from .....data.samples import Sample
 
 
-class ThreadAugmentation(OODAugmantation, ArtifactAugmentation):
+class ThreadAugmentation(OODAugmentation, ArtifactAugmentation, SampableAugmentation):
     def __init__(
         self,
         scale=1,
         path=None,
         severity: SeverityMeasurement = None,
         mask_threshold=0.3,
+        sample_intervals=None,
         keep_ignorred=True,
     ) -> None:
         super().__init__()
         self.scale = scale
         self.path = path
         self.mask_threshold = mask_threshold
-        self.keep_ignorred = keep_ignorred
+        if sample_intervals == None:
+            self.sample_intervals = [(0.1, 9)]
+        else:
+            self.sample_intervals = sample_intervals
         self.severity_class: SeverityMeasurement = (
             PixelPercentageSeverityMeasurement() if severity == None else severity
         )
+        self.keep_ignorred = keep_ignorred
 
-    def param_range(self):
-        return {"scale": (0.1, 9)}
+    def _apply_sampling(self):
+        return super()._set_attr_to_uniform_samples_from_intervals(
+            {"scale": self.sample_intervals}
+        )
 
     def _augment(self, sample: Sample) -> Sample:
         img, mask = super().transparentOverlay(

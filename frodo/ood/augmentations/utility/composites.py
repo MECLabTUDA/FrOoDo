@@ -1,43 +1,34 @@
 import numpy as np
 
-from ..types import OODAugmantation
+from ..types import OODAugmentation
 from ...augmentations import AugmentationComposite
+from ....data import Sample
+from ....data import SampleMetadataCommonTypes
 
 
 class PickNComposite(AugmentationComposite):
     def __init__(
-        self,
-        augmantations,
-        n=1,
-        replace=False,
-        probabilities=None,
+        self, augmentations, n=1, replace=False, probabilities=None, keep_severity=False
     ) -> None:
-        super().__init__(augmantations)
+        super().__init__(augmentations)
         self.n = n
         self.replace = replace
+        self.keep_severity = keep_severity
         if probabilities == None:
-            self.probabilities = np.ones(len(self.augmantations)) / len(
-                self.augmantations
+            self.probabilities = np.ones(len(self.augmentations)) / len(
+                self.augmentations
             )
         else:
             self.probabilities = probabilities
 
-    def __call__(self, img, mask):
+    def _set_metadata(self, sample: Sample) -> Sample:
+        if not self.keep_severity:
+            sample.metadata[SampleMetadataCommonTypes.OOD_SEVERITY.name] = None
+        return sample
+
+    def _augment(self, sample: Sample) -> Sample:
         for augmentation in np.random.choice(
-            self.augmantations, self.n, replace=self.replace, p=self.probabilities
+            self.augmentations, self.n, replace=self.replace, p=self.probabilities
         ):
-            img, mask = augmentation(img, mask)
-        return img, mask
-
-
-class AllComposite(AugmentationComposite):
-    def __init__(
-        self,
-        augmantations,
-    ) -> None:
-        super().__init__(augmantations)
-
-    def __call__(self, img, mask):
-        for augmentation in self.augmantations:
-            img, mask = augmentation(img, mask)
-        return img, mask
+            sample = augmentation(sample)
+        return sample

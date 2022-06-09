@@ -3,14 +3,40 @@ from torchvision.transforms import ColorJitter
 
 import random
 
-from ...augmentations import OODAugmantation, ProbabilityAugmentation, PickNComposite
+from ...augmentations import (
+    OODAugmentation,
+    ProbabilityAugmentation,
+    PickNComposite,
+    SampableAugmentation,
+)
+from ...severity import ParameterSeverityMeasurement, SeverityMeasurement
+from ....data import Sample
+from ..utils import full_image_ood
 
 
-class BrightnessAugmentation(OODAugmantation):
-    def __init__(self, brightness=1.5, prob=1) -> None:
+class BrightnessAugmentation(OODAugmentation, SampableAugmentation):
+    def __init__(
+        self,
+        brightness=1.5,
+        sample_intervals=None,
+        severity: SeverityMeasurement = None,
+        keep_ignorred=True,
+    ) -> None:
         super().__init__()
         self.brightness = brightness
-        self.prob = prob
+        if sample_intervals == None:
+            self.sample_intervals = [(0.2, 0.8), (1.2, 2)]
+        else:
+            self.sample_intervals = sample_intervals
+        self.severity_class = (
+            ParameterSeverityMeasurement(
+                "brightness",
+                (self.sample_intervals[0][0], self.sample_intervals[-1][1]),
+            )
+            if severity == None
+            else severity
+        )
+        self.keep_ignorred = keep_ignorred
 
     @property
     def brightness(self):
@@ -25,24 +51,15 @@ class BrightnessAugmentation(OODAugmantation):
             self._brightness = (value, value)
         self.jitter = ColorJitter(brightness=self.brightness)
 
-    def __call__(self, img, mask):
-        if random.random() >= self.prob:
-            return img, mask
-        return self.jitter(img), torch.zeros_like(mask)
+    def _get_parameter_dict(self):
+        return {"brightness": self.brightness[0]}
 
-
-class HigherOrLowerBrightnessAugmentation(OODAugmantation):
-    def __init__(self, lower_range=(0.2, 0.6), higher_range=(1.4, 2), prob=1) -> None:
-        super().__init__()
-        self.augmentation = ProbabilityAugmentation(
-            PickNComposite(
-                [
-                    BrightnessAugmentation(brightness=lower_range, prob=1),
-                    BrightnessAugmentation(brightness=higher_range, prob=1),
-                ]
-            ),
-            prob,
+    def _apply_sampling(self):
+        return super()._set_attr_to_uniform_samples_from_intervals(
+            {"brightness": self.sample_intervals}
         )
 
-    def __call__(self, img, mask):
-        return self.augmentation(img, mask)
+    def _augment(self, sample: Sample) -> Sample:
+        sample["image"] = self.jitter(sample["image"])
+        sample = full_image_ood(sample, self.keep_ignorred)
+        return sample

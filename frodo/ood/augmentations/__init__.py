@@ -1,13 +1,12 @@
 from .types import *
 
 from .utility import (
-    AllComposite,
     NTimesAugmentation,
     AugmentationComposite,
     PickNComposite,
     ProbabilityAugmentation,
     Nothing,
-    SampledOODAugmentation,
+    AugmentationSampling,
     AugmentationPipeline,
     SizeInOODPipeline,
 )
@@ -19,11 +18,11 @@ from .pathology.artifacts import (
     ThreadAugmentation,
 )
 
-from .patchwise import (
-    BrightnessAugmentation,
-    HigherOrLowerBrightnessAugmentation,
-    CropAugmentation,
-    GaussianBlurAugmentation,
-)
 
 from .indistribution import *
+
+from .patchwise import (
+    BrightnessAugmentation,
+    ZoomInAugmentation,
+    GaussianBlurAugmentation,
+)

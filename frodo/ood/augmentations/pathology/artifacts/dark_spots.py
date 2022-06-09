@@ -3,7 +3,7 @@ from os import listdir
 from os.path import join
 
 
-from ....augmentations import OODAugmantation
+from ....augmentations import OODAugmentation, SampableAugmentation
 from .artifacts import ArtifactAugmentation, data_folder
 from .....ood.severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
 from .....data.metadata import *
@@ -11,14 +11,16 @@ from ...utils import *
 from .....data.samples import Sample
 
 
-class DarkSpotsAugmentation(ArtifactAugmentation, OODAugmantation):
+class DarkSpotsAugmentation(
+    ArtifactAugmentation, OODAugmentation, SampableAugmentation
+):
     def __init__(
         self,
         scale=1,
         severity: SeverityMeasurement = None,
         path=join(data_folder, "dark_spots/small_spot.png"),
         mask_threshold=0.5,
-        sample_range=None,
+        sample_intervals=None,
         keep_ignorred=True,
     ) -> None:
         super().__init__()
@@ -28,14 +30,16 @@ class DarkSpotsAugmentation(ArtifactAugmentation, OODAugmantation):
         self.severity_class: SeverityMeasurement = (
             PixelPercentageSeverityMeasurement() if severity == None else severity
         )
-        if sample_range == None:
-            self.sample_range = {"scale": (0.1, 5)}
+        if sample_intervals == None:
+            self.sample_intervals = [(0.1, 5)]
         else:
-            self.sample_range = sample_range
+            self.sample_intervals = sample_intervals
         self.keep_ignorred = keep_ignorred
 
-    def param_range(self):
-        return self.sample_range
+    def _apply_sampling(self):
+        return super()._set_attr_to_uniform_samples_from_intervals(
+            {"scale": self.sample_intervals}
+        )
 
     def _augment(self, sample: Sample) -> Sample:
         img, mask = super().transparentOverlay(

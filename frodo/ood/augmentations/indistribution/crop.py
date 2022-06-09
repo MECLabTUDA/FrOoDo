@@ -3,11 +3,11 @@ from torch import Tensor
 from typing import Tuple
 import random
 
-from .. import INAugmantation
+from .. import INAugmentation
 from ....data.samples import Sample
 
 
-class InCrop(INAugmantation):
+class InCrop(INAugmentation):
     def __init__(self, crop_size) -> None:
         super().__init__()
         self.crop_size = crop_size

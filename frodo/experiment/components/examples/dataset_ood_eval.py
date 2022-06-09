@@ -6,7 +6,7 @@ from ....ood.metrics import Metric
 from ....ood.methods import OODMethod
 from ....ood.strategies import OODDatasetsStrategy
 from ....data.datasets.adapter import DatasetAdapter
-from ....ood.augmentations import Augmantation
+from ....ood.augmentations import Augmentation
 
 
 class DatasetOODEvaluationComponent(OODStreatgyComponent):

@@ -6,14 +6,14 @@ from ....ood.metrics import Metric
 from ....ood.methods import OODMethod
 from ....ood.strategies import AugmentationStrategy
 from ....data.datasets.adapter import DatasetAdapter
-from ....ood.augmentations import Augmantation
+from ....ood.augmentations import Augmentation
 
 
 class AugmentationOODEvaluationComponent(OODStreatgyComponent):
     def __init__(
         self,
         data_adapter: DatasetAdapter,
-        augmentation: Augmantation,
+        augmentation: Augmentation,
         model: Model,
         methods: List[OODMethod] = None,
         metrics: List[Metric] = None,

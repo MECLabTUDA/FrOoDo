@@ -6,7 +6,7 @@ from ..interfaces import (
     SampleDataset,
     MultiFileOverlappingTilesDataset,
 )
-from ....ood.augmentations import OODAugmantation, InCrop, InResize, SizeInOODPipeline
+from ....ood.augmentations import OODAugmentation, InCrop, InResize, SizeInOODPipeline
 from ..adapter.adapter import AlreadyASampleAdapter, ImageLabelMetaAdapter
 
 
@@ -91,7 +91,7 @@ class BCSS_OOD_Dataset(OODAugmentationDataset, SampleDataset):
     def __init__(
         self,
         bcss_base: BCSS_Base_Dataset = None,
-        augmentation: OODAugmantation = None,
+        augmentation: OODAugmentation = None,
         seed=None,
     ) -> None:
         super().__init__(

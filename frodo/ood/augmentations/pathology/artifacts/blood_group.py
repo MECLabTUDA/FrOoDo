@@ -3,7 +3,7 @@ from os import listdir
 from os.path import join
 
 
-from ....augmentations import OODAugmantation
+from ....augmentations import OODAugmentation, SampableAugmentation
 from .artifacts import ArtifactAugmentation, data_folder
 from .....ood.severity import PixelPercentageSeverityMeasurement, SeverityMeasurement
 from .....data.metadata import *
@@ -11,7 +11,9 @@ from ...utils import *
 from .....data.samples import Sample
 
 
-class BloodGroupAugmentation(ArtifactAugmentation, OODAugmantation):
+class BloodGroupAugmentation(
+    ArtifactAugmentation, OODAugmentation, SampableAugmentation
+):
     def __init__(
         self,
         scale=1,
@@ -34,8 +36,10 @@ class BloodGroupAugmentation(ArtifactAugmentation, OODAugmantation):
             self.sample_range = sample_range
         self.keep_ignorred = keep_ignorred
 
-    def param_range(self):
-        return self.sample_range
+    def _apply_sampling(self):
+        return super()._set_attr_to_uniform_samples_from_intervals(
+            {"scale": self.sample_intervals}
+        )
 
     def _augment(self, sample: Sample) -> Sample:
         img, mask = super().transparentOverlay(

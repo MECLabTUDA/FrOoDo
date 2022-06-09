@@ -4,11 +4,11 @@ from torch import Tensor
 
 from typing import Tuple
 
-from ..types import INAugmantation
+from ..types import INAugmentation
 from ....data.samples import Sample
 
 
-class InResize(INAugmantation):
+class InResize(INAugmentation):
     def __init__(self, resize_size: Tuple[int, int]) -> None:
         super().__init__()
         self.resize_size = resize_size

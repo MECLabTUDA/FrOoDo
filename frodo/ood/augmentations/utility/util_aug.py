@@ -1,13 +1,13 @@
 import random
 
-from ...augmentations import OODAugmantation
+from ...augmentations import OODAugmentation
 from ....data.samples import Sample
 
 
-class ProbabilityAugmentation(OODAugmantation):
+class ProbabilityAugmentation(OODAugmentation):
     def __init__(self, augmentation, prob=0.5) -> None:
         super().__init__()
-        assert isinstance(augmentation, OODAugmantation)
+        assert isinstance(augmentation, OODAugmentation)
         self.augmentation = augmentation
         self.prob = prob
 
@@ -17,7 +17,7 @@ class ProbabilityAugmentation(OODAugmantation):
         return self.augmentation(sample)
 
 
-class Nothing(OODAugmantation):
+class Nothing(OODAugmentation):
     def __init__(self) -> None:
         super().__init__()
 
@@ -25,7 +25,7 @@ class Nothing(OODAugmantation):
         return sample
 
 
-class NTimesAugmentation(OODAugmantation):
+class NTimesAugmentation(OODAugmentation):
     def __init__(self, augmentation, n) -> None:
         super().__init__()
         self.augmentation = augmentation
@@ -33,5 +33,5 @@ class NTimesAugmentation(OODAugmantation):
 
     def __call__(self, sample: Sample) -> Sample:
         for _ in range(self.n):
-            sample = a(sample)
+            sample = self.augmentation(sample)
         return sample
