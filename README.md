@@ -16,6 +16,12 @@ pip install -r requirements.txt
 
 ## Demo
 
+This demo shows a typical ood evaluation scenario. A pathology dataset (in this case the BCSS dataset [1] ) is augmented with dark black spots which are marked as ood pixels. The images are then fed into a neual network and and ood score is comoputed with well known post-hoc ood methods. 
+
+These scores are used by the AuRoc Metrics to calculate the seperability of in and ood data. Because of the augmentation there is information about the percentage of ood pixels in an image and the scores can therefore be calculated for different numbers of percentages.
+
+You can find this demo [here](demo.ipynb).
+
 ### Code
 ```python
 from froodo.quickstart import *
@@ -50,7 +56,7 @@ experiment()
 ```
 ### Output
 
-The output of en experiment will be a sample of the evaluation data so see the correct augmentaion and the chose isualized metrics.
+The output of en experiment will be a sample of the evaluation data so see the correct augmentaion and the chosen visualized metrics.
 
 ![](samples.png "Augmentation Samples") 
 
@@ -64,6 +70,8 @@ OODAuRoC(bin_by='OOD_SEVERITY', num_bins=50) | OODAuRoC()
 
 ## Manual
 
+The main advantage of froodo is that it can be extend easily because of clear defined interfaces. The manual pages describe how to e.g. add an augmentation or new ood method. 
+
 
 Explanation | Link
 -- | :--:
@@ -74,6 +82,10 @@ Dataset Adaptation | tbd
 How does the framework works internally?| tbd
 
 ## References
+[1] Amgad, M., Elfandy, H., Hussein, H., Atteya, L.A., Elsebaie, M.A., Abo Elnasr,
+L.S., Sakr, R.A., Salem, H.S., Ismail, A.F., Saad, A.M., et al.: Structured crowd-
+sourcing enables convolutional segmentation of histology images. Bioinformatics
+(2019)
 
 
 

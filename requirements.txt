@@ -3,3 +3,6 @@ numpy
 pandas
 tqdm
 scipy
+tabulate
+sklearn
+matplotlib
