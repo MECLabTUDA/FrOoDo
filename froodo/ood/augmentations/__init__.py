@@ -6,7 +6,7 @@ from .utility import (
     PickNComposite,
     ProbabilityAugmentation,
     Nothing,
-    AugmentationSampling,
+    SampledAugmentation,
     AugmentationPipeline,
     SizeInOODPipeline,
 )

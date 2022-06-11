@@ -54,7 +54,7 @@ class OODStreatgyComponent(Component):
     def __call__(self):
 
         if isinstance(self.strategy.dataset, SampleDataset):
-            self.strategy.dataset.sample(10)
+            self.strategy.dataset.sample(7)
 
         # create data container based on the metric requirements
         container = infer_container(self.metrics)

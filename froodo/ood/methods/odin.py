@@ -5,7 +5,7 @@ from .ood_methods import OODMethod
 
 
 class ODIN(OODMethod):
-    def __init__(self, hyperparams={"temperature": 2, "noise": 0.05}) -> None:
+    def __init__(self, hyperparams={"temperature": 2, "noise": 0.004}) -> None:
         super().__init__()
         self.temperature = hyperparams["temperature"]
         self.noise = hyperparams["noise"]

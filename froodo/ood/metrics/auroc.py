@@ -134,7 +134,13 @@ class OODAuRoC(MetricGroup):
                 )
 
             plt.ylabel("AuRoC")
-            plt.legend()
+            plt.legend(
+                loc="lower center",
+                bbox_to_anchor=(0.5, 1.02),
+                fancybox=True,
+                shadow=True,
+                ncol=5,
+            )
             plt.show()
 
 

@@ -8,7 +8,7 @@ from ....data.samples import Sample
 from ..utils import init_augmentation
 
 
-class AugmentationSampling(Augmentation):
+class SampledAugmentation(Augmentation):
     def __init__(self, augmentation: SampableAugmentation, probability=0.7) -> None:
         assert isinstance(
             augmentation, SampableAugmentation
