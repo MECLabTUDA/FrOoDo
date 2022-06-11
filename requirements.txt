@@ -6,3 +6,4 @@ scipy
 tabulate
 sklearn
 matplotlib
+zarr

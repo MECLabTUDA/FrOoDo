@@ -4,6 +4,8 @@
 
 This framework is made to tackle the problems of out of distrubtion data in digital pathology. During the data aquisition process different types of out of distribution data can occur e.g. artifacts like fat drops or unfocssed parts of the whole slide image. These ood data lower the segmentation metrics like the dice score in a critical way and it is therefore necessary to identify and remove ood data for the automatic segmentation with neural networks.
 
+![](imgs/augmentations.png "Augmentation Samples") 
+
 ## Installation
 
 The framework is designed to provide a quick and easy possibility to test new OOD methods, evaluate a model or design new augmentations. Therefore for most cases you wont need to modify ypur dataset or model to use this framework.
@@ -58,11 +60,11 @@ experiment()
 
 The output of en experiment will be a sample of the evaluation data so see the correct augmentaion and the chosen visualized metrics.
 
-![](samples.png "Augmentation Samples") 
+![](imgs/samples.png "Augmentation Samples") 
 
 OODAuRoC(bin_by='OOD_SEVERITY', num_bins=50) | OODAuRoC()
 :--: | :--:
-![](metric.png "Binned AuRoC Metric") | ![](metric2.png "AuRoC Metric") 
+![](imgs/metric.png "Binned AuRoC Metric") | ![](imgs/metric2.png "AuRoC Metric") 
 
 
 
@@ -86,6 +88,13 @@ How does the framework works internally?| tbd
 L.S., Sakr, R.A., Salem, H.S., Ismail, A.F., Saad, A.M., et al.: Structured crowd-
 sourcing enables convolutional segmentation of histology images. Bioinformatics
 (2019)
+
+[2] Liu, W., Wang, X., Owens, J., Li, Y.: Energy-based out-of-distribution detection.
+Advances in Neural Information Processing Systems (2020)
+
+[3] Liang, S., Li, Y., Srikant, R.: Enhancing the reliability of out-of-distribution image
+detection in neural networks. In: International Conference on Learning Represen-
+tations (2018)
 
 
 
