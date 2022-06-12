@@ -1,6 +1,6 @@
 # FrOoDo - Framework for Out of Distribution Detection
 
-![](imgs/froodo.png "Augmentation Samples with different scales/intensities") 
+![](imgs/froodo.png "Augmentation Samples with different scales and intensities") 
 
 ## Introduction
 
