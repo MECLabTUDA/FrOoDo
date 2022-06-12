@@ -7,3 +7,4 @@ tabulate
 sklearn
 matplotlib
 zarr
+tifffile

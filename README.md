@@ -95,7 +95,6 @@ Dataset installation | For a quick start we provide a an installation guide for 
 
 ## Future Work
 
-- Integrated methods
 - Experiment tracking
 - More augmentations, more models, more methods, more ...
 
