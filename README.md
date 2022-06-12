@@ -1,6 +1,6 @@
 # FrOoDo - Framework for Out of Distribution Detection
 
-![](imgs/froodo.png "Augmentation Samples with different scales and intensities") 
+![](imgs/froodo.PNG "Framework Overview") 
 
 ## Introduction
 
@@ -80,10 +80,10 @@ The main advantage of froodo is that it can be extend easily because of clear de
 Title | Explaination|  Link
 -- | :-- | :--:
  Create new **Post-hoc OOD methods** | Learn how to implement your own post-hoc ood methods and how to evaluate it on your datasets |  [here](docs/NEW_METHOD.md)
-Create new **metrics** for your experiments |  | [here](docs/NEW_METRIC.md)
-Create new **augmentation** for your dataset| | tbd
+Create new **metrics** for your experiments | Evaluation is all about choosing the correct metrics for your experiment. Learn how to create new metrics and how to save the data in container during the experiment | [here](docs/NEW_METRIC.md)
+Create new **augmentation** for your dataset| Extend the framework with new pathology augmentations and directly evaluate them without any change | tbd
 Dataset Adaptation | The frameworks uses an object "Sample" to process the input. Therefore your dataset needs to be adapted to this standard. Learn how to use the default adapters or how tpo create an own adapter for a more complex dataset | tbd
-How does the framework works internally?|  | tbd
+How does the framework works internally?| Deep dive into the frameworks internal processes to better understand how it works and where possible errors can occur  | tbd
 
 ## Future Work
 
