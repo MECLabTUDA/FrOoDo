@@ -77,13 +77,13 @@ OODAuRoC(bin_by='OOD_SEVERITY', num_bins=50) | OODAuRoC()
 The main advantage of froodo is that it can be extend easily because of clear defined interfaces. The manual pages describe how to e.g. add an augmentation or new ood method. 
 
 
-Explanation | Link
--- | :--:
-Create new **Post-hoc OOD methods** | [here](docs/NEW_METHOD.md)
-Create new **metrics** for your experiments | [here](docs/NEW_METRIC.md)
-Create new **augmentation** for your dataset| tbd
-Dataset Adaptation | tbd
-How does the framework works internally?| tbd
+Title | Explaination|  Link
+-- | :-- | :--:
+ Create new **Post-hoc OOD methods** | Learn how to implement your own post-hoc ood methods and how to evaluate it on your datasets |  [here](docs/NEW_METHOD.md)
+Create new **metrics** for your experiments |  | [here](docs/NEW_METRIC.md)
+Create new **augmentation** for your dataset| | tbd
+Dataset Adaptation | The frameworks uses an object "Sample" to process the input. Therefore your dataset needs to be adapted to this standard. Learn how to use the default adapters or how tpo create an own adapter for a more complex dataset | tbd
+How does the framework works internally?|  | tbd
 
 ## Future Work
 
@@ -103,6 +103,11 @@ Advances in Neural Information Processing Systems (2020)
 [3] Liang, S., Li, Y., Srikant, R.: Enhancing the reliability of out-of-distribution image
 detection in neural networks. In: International Conference on Learning Represen-
 tations (2018)
+
+[4] Schömig-Markiefka, B., Pryalukhin, A., Hulla, W., Bychkov, A., Fukuoka, J., Mad-
+abhushi, A., Achter, V., Nieroda, L., Büttner, R., Quaas, A., et al.: Quality control
+stress test for deep learning-based diagnostic model in digital pathology. Modern
+Pathology (2021)
 
 
 
