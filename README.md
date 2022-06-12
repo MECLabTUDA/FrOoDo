@@ -6,7 +6,13 @@
 
 This framework is made to tackle the problems of out of distrubtion data in digital pathology. During the data aquisition process different types of out of distribution data can occur e.g. artifacts like fat drops or unfocssed parts of the whole slide image. These ood data lower the segmentation metrics like the dice score in a critical way and it is therefore necessary to identify and remove ood data for the automatic segmentation with neural networks.
 
+Currently the framework supports the augmentations below. As you can see the severity of the augmentation can be chosen:
+
 ![](imgs/augmentations.png "Augmentation Samples with different scales/intensities") 
+
+The framework is designed to be as flexible as possible to fit different types of experiments. As described in the framework overview it is possible to quickly add new models, new ood methods, new datasets and new metrics. Therefore you can focus on your specific research question and let the framework do the rest.
+
+
 
 ## Installation
 
@@ -83,7 +89,9 @@ Title | Explaination|  Link
 Create new **metrics** for your experiments | Evaluation is all about choosing the correct metrics for your experiment. Learn how to create new metrics and how to save the data in container during the experiment | [here](docs/NEW_METRIC.md)
 Create new **augmentation** for your dataset| Extend the framework with new pathology augmentations and directly evaluate them without any change | tbd
 Dataset Adaptation | The frameworks uses an object "Sample" to process the input. Therefore your dataset needs to be adapted to this standard. Learn how to use the default adapters or how tpo create an own adapter for a more complex dataset | tbd
+Different **OOD Strategies** | Besides augmentation there are other types of ood data. Learn which ood types are already included and how to create a new one | tbd
 How does the framework works internally?| Deep dive into the frameworks internal processes to better understand how it works and where possible errors can occur  | tbd
+Dataset installation | For a quick start we provide a an installation guide for the used datasets  | tbd
 
 ## Future Work
 
