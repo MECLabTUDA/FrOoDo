@@ -1,10 +1,71 @@
 from torch.utils.data import Dataset
+import torch
 
 import copy
 from typing import Dict
 
+from ...metadata.metadata import SampleMetadata
 from ...samples import Sample
 from ..interfaces import SampleDataset
+
+
+class GeneralDatasetAdapter(Dataset, SampleDataset):
+    def __init__(self, dataset, remapping: Dict = None, **kwargs):
+        if isinstance(dataset, SampleDataset):
+            self.adapter = AlreadyASampleAdapter(dataset, **kwargs)
+        sample = dataset[0]
+        if remapping == None:
+            if isinstance(sample, Sample):
+                self.adapter = AlreadyASampleAdapter(dataset, **kwargs)
+            else:
+                assert len(sample) in [
+                    2,
+                    3,
+                ], "If no remapping is given dataset should return a tuple with length of 2 (without metadata) or 3 (with metadata)"
+                assert isinstance(
+                    sample[0], torch.Tensor
+                ), "Image should be of type torch.tensor"
+                if len(sample) == 3:
+                    assert isinstance(
+                        sample[2], SampleMetadata
+                    ), "If no remapping is given position 3 of tuple needs to be metadata"
+                self.adapter = ImageLabelMetaAdapter(dataset, **kwargs)
+        else:
+            assert isinstance(remapping, dict), "remapping needs to be a dictionary"
+            contains_int = False
+            contains_str = False
+            for k, v in remapping.items():
+                assert isinstance(k, str), "Remapping keys must be strings"
+                if isinstance(v, int):
+                    assert (
+                        not contains_str
+                    ), "Remapping values must be of same type (int or sring)"
+                    contains_int = True
+                if isinstance(v, str):
+                    assert (
+                        not contains_int
+                    ), "Remapping values must be of same type (int or sring)"
+                    contains_str = True
+                else:
+                    assert isinstance(v, int) or isinstance(
+                        v, str
+                    ), "Remapping values must be of type int or string"
+
+                assert contains_int ^ contains_str
+
+                if contains_int:
+                    self.adapter = PositionalAdapter(dataset, remapping, **kwargs)
+                elif contains_str:
+                    assert isinstance(sample, dict)
+                    self.adapter = DatasetWithAllInOneDictAdapter(
+                        dataset, remapping, **kwargs
+                    )
+
+    def __len__(self):
+        return len(self.adapter)
+
+    def __getitem__(self, index) -> Sample:
+        return self.adapter.__getitem__(index)
 
 
 class DatasetAdapter(Dataset, SampleDataset):

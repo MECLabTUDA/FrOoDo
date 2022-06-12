@@ -4,5 +4,6 @@ from .adapter import (
     DatasetWithAllInOneDictAdapter,
     ImageLabelMetaAdapter,
     PositionalAdapter,
+    GeneralDatasetAdapter,
 )
 from .utils import *
