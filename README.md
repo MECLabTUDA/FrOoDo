@@ -1,8 +1,11 @@
 # FrOoDo - Framework for Out of Distribution Detection
 
-![](imgs/froodo.PNG "Framework Overview") 
+![](imgs/FrOoDo_Logo.png "Framework Logo") 
+
 
 ## Introduction
+
+![](imgs/FrOoDo.png "Framework Overview") 
 
 This framework is made to tackle the problems of out of distrubtion data in digital pathology. During the data aquisition process different types of out of distribution data can occur e.g. artifacts like fat drops or unfocssed parts of the whole slide image. These ood data lower the segmentation metrics like the dice score in a critical way and it is therefore necessary to identify and remove ood data for the automatic segmentation with neural networks.
 
@@ -54,6 +57,8 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
     data_adapter=adapter,
+
+![](imgs/FrOoDo.png "Framework Overview") 
     augmentation=SampledAugmentation(DarkSpotsAugmentation()),
     model=net,
     metrics=metrics,
