@@ -1,5 +1,6 @@
 # FrOoDo - Framework for Out of Distribution Detection
-
+[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-available-blue.svg)](https://meclabtuda.github.io/M3d-Cam/)
 ![](imgs/FrOoDo_Logo.png "Framework Logo") 
 
 
