@@ -87,8 +87,8 @@ Title | Explanation|  Link
 -- | :-- | :--:
  Create new **Post-hoc OOD methods** | Learn how to implement your own post-hoc ood methods and how to evaluate it on your datasets |  [here](docs/NEW_METHOD.md)
 Create new **metrics** for your experiments | Evaluation is all about choosing the correct metrics for your experiment. Learn how to create new metrics and how to save the data in container during the experiment | [here](docs/NEW_METRIC.md)
-Create new **augmentation** for your dataset| Extend the framework with new pathology augmentations and directly evaluate them without any change | tbd
-Dataset Adaptation | The frameworks uses an object "Sample" to process the input. Therefore your dataset needs to be adapted to this standard. Learn how to use the default adapters or how tpo create an own adapter for a more complex dataset | tbd
+All you need to know about **augmentations** | Extend the framework with new pathology augmentations and directly evaluate them without any change | [here](docs/AUGMENTATION.md)
+Dataset Adaptation | The frameworks uses an object "Sample" to process the input. Therefore your dataset needs to be adapted to this standard. Learn how to use the default adapters or how tpo create an own adapter for a more complex dataset | [here](docs/DATASET_ADAPTER.md)
 Different **OOD Strategies** | Besides augmentation there are other types of ood data. Learn which ood types are already included and how to create a new one | [here](docs/OOD_STRATEGY.md)
 How does the framework works internally?| Deep dive into the frameworks internal processes to better understand how it works and where possible errors can occur  | tbd
 Dataset installation | For a quick start we provide an installation guide for the used datasets  | [here](docs/datasets/DATASET_OVERVIEW.md)
