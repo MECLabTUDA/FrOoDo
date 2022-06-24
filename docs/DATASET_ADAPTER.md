@@ -9,7 +9,7 @@ A SampleDataset is a FrOoDo specific dataset which returns an object of the clas
 
 - The image: Image tensor. All augmentations will be applied on the image
 - The label_dict: Default dictionary that contains information abut the labesls e.g. the segmentation masl, the ood mask or the class label
-- The metadata: The metadata object is like a default dict and saves relevant imformation about an image e.g. OOD status, ignore index, OOD reason
+- The metadata: The metadata object is like a default dict and saves relevant information about an image e.g. OOD status, ignore index, OOD reason
 
 
 
