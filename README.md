@@ -1,8 +1,22 @@
 # FrOoDo - Framework for Out of Distribution Detection
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
-[![Docs](https://img.shields.io/badge/docs-available-blue.svg)](https://meclabtuda.github.io/M3d-Cam/)
+[![Docs](https://img.shields.io/badge/docs-available-blue.svg)](https://github.com/MECLabTUDA/FrOoDo/tree/main/docs)
 ![](imgs/FrOoDo_Logo.png "Framework Logo") 
 
+A Pytorch framework for Out-of-Distibution Detection. The technical report can be found at https://arxiv.org/abs/2208.00963.
+
+If you use this framework in one of your projects please consider to cite 
+
+```
+@misc{FrOoDo2022,
+      title={FrOoDo: Framework for Out-of-Distribution Detection}, 
+      author={Stieber, Jonathan and Fuchs, Moritz and Mukhopadhyay, Anirban},
+      year={2022},
+      eprint={2208.00963},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+```
 
 ## Introduction
 
