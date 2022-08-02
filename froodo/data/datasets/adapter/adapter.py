@@ -2,7 +2,7 @@ from torch.utils.data import Dataset
 import torch
 
 import copy
-from typing import Dict
+from typing import Dict, Union
 
 from ...metadata.metadata import SampleMetadata
 from ...samples import Sample
@@ -10,13 +10,15 @@ from ..interfaces import SampleDataset
 
 
 class GeneralDatasetAdapter(Dataset, SampleDataset):
-    def __init__(self, dataset, remapping: Dict = None, **kwargs):
+    def __init__(
+        self, dataset, remapping: Dict = None, name: Union[str, None] = None, **kwargs
+    ):
         if isinstance(dataset, SampleDataset):
-            self.adapter = AlreadyASampleAdapter(dataset, **kwargs)
+            self.adapter = AlreadyASampleAdapter(dataset, name=name, **kwargs)
         sample = dataset[0]
         if remapping == None:
             if isinstance(sample, Sample):
-                self.adapter = AlreadyASampleAdapter(dataset, **kwargs)
+                self.adapter = AlreadyASampleAdapter(dataset, name=name, **kwargs)
             else:
                 assert len(sample) in [
                     2,
@@ -29,7 +31,7 @@ class GeneralDatasetAdapter(Dataset, SampleDataset):
                     assert isinstance(
                         sample[2], SampleMetadata
                     ), "If no remapping is given position 3 of tuple needs to be metadata"
-                self.adapter = ImageLabelMetaAdapter(dataset, **kwargs)
+                self.adapter = ImageLabelMetaAdapter(dataset, name=name, **kwargs)
         else:
             assert isinstance(remapping, dict), "remapping needs to be a dictionary"
             contains_int = False
@@ -54,11 +56,13 @@ class GeneralDatasetAdapter(Dataset, SampleDataset):
                 assert contains_int ^ contains_str
 
                 if contains_int:
-                    self.adapter = PositionalAdapter(dataset, remapping, **kwargs)
+                    self.adapter = PositionalAdapter(
+                        dataset, remapping, name=name, **kwargs
+                    )
                 elif contains_str:
                     assert isinstance(sample, dict)
                     self.adapter = DatasetWithAllInOneDictAdapter(
-                        dataset, remapping, **kwargs
+                        dataset, remapping, name=name, **kwargs
                     )
 
     def __len__(self):
@@ -69,9 +73,10 @@ class GeneralDatasetAdapter(Dataset, SampleDataset):
 
 
 class DatasetAdapter(Dataset, SampleDataset):
-    def __init__(self, dataset, **kwargs) -> None:
+    def __init__(self, dataset, name: Union[str, None] = None, **kwargs) -> None:
         self.dataset = dataset
         self.metadata_args = kwargs
+        self.name = name
 
     def _add_metadata_args(self, sample: Sample) -> Sample:
         sample.metadata.data.update(self.metadata_args)
@@ -85,8 +90,8 @@ class DatasetAdapter(Dataset, SampleDataset):
 
 
 class AlreadyASampleAdapter(DatasetAdapter):
-    def __init__(self, dataset, **kwargs) -> None:
-        super().__init__(dataset, **kwargs)
+    def __init__(self, dataset, name: Union[str, None] = None, **kwargs) -> None:
+        super().__init__(dataset, name=name, **kwargs)
 
     def __getitem__(self, index) -> Sample:
         sample = self.dataset.__getitem__(index)
@@ -95,8 +100,8 @@ class AlreadyASampleAdapter(DatasetAdapter):
 
 
 class ImageLabelMetaAdapter(DatasetAdapter):
-    def __init__(self, dataset, **kwargs) -> None:
-        super().__init__(dataset, **kwargs)
+    def __init__(self, dataset, name: Union[str, None] = None, **kwargs) -> None:
+        super().__init__(dataset, name=name, **kwargs)
 
     def __getitem__(self, index) -> Sample:
         data = self.dataset.__getitem__(index)
@@ -109,8 +114,14 @@ class ImageLabelMetaAdapter(DatasetAdapter):
 
 
 class PositionalAdapter(DatasetAdapter):
-    def __init__(self, dataset, positional_mapping: Dict[str, int], **kwargs) -> None:
-        super().__init__(dataset, **kwargs)
+    def __init__(
+        self,
+        dataset,
+        positional_mapping: Dict[str, int],
+        name: Union[str, None] = None,
+        **kwargs
+    ) -> None:
+        super().__init__(dataset, name=name, **kwargs)
         self.positional_mapping = positional_mapping
         assert (
             self.positional_mapping.get("image", None) != None
@@ -134,8 +145,10 @@ class PositionalAdapter(DatasetAdapter):
 
 
 class DatasetWithAllInOneDictAdapter(DatasetAdapter):
-    def __init__(self, dataset, remapping=None, **kwargs) -> None:
-        super().__init__(dataset, **kwargs)
+    def __init__(
+        self, dataset, remapping=None, name: Union[str, None] = None, **kwargs
+    ) -> None:
+        super().__init__(dataset, name=name, **kwargs)
         self.label_mapping = copy.copy(remapping)
         if remapping.get("image", None) == None:
             print("No image mapping is giving. Assuming that 'image' is the key.")

@@ -10,7 +10,7 @@ Please download the BCSS dataset [1] files following the the instructions of the
 To use the build-in BCSS Dataset classes the files need to be converted into tif files. You can use the static method of the MultiFileOverlappingTilesDataset to do that.
 
 ```python
-from froodo.quickstart import *
+from froodo import *
 
 MultiFileOverlappingTilesDataset.save_as_tif(
     raw_folder = "folder to downloaded raw files",
@@ -60,7 +60,7 @@ pipeline = SizeInOODPipeline(in_augmentations=[
             ])
 
 # create dataset that applies augmentations on samples
-cropped_resized_bcss_set = OODAugmentationDataset(bcss_adapted_test_set, pipeline)
+cropped_resized_bcss_set = AugmentationDataset(bcss_adapted_test_set, pipeline)
 
 cropped_resized_bcss_set.sample()
 ```

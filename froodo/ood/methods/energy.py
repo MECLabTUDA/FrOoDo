@@ -15,6 +15,9 @@ class EnergyBased(OODMethod):
 
     def calculate_ood_score(self, imgs, net, batch=None):
         with torch.no_grad():
-            output, *_ = net(imgs.cuda())
-        scores = -self.temperature * torch.logsumexp(output / self.temperature, dim=1)
+            outputs = net(imgs.cuda())
+        outputs = self._post_proc_net_output(outputs)
+        scores = -self.temperature * torch.logsumexp(
+            outputs[0] / self.temperature, dim=1
+        )
         return -scores.detach().cpu()

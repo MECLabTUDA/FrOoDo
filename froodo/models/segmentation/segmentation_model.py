@@ -22,9 +22,7 @@ class SegmentationModel(Model):
         net = self.net_class(**self.net_args)
 
         # rename stat dict
-        wrong_dict = torch.load(f"U:\\ssl4uc\\saved\\{self.folder}\\model_best_val.pt")[
-            "state_dict"
-        ]
+        # load dict
         correct_dict = self.state_dict_modification(wrong_dict)
         net.load_state_dict(correct_dict)
 

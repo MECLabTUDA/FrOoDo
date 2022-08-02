@@ -54,7 +54,7 @@ A guide on how to install the BCSS dataset for FrOoDo can be found [here](docs/d
 
 ### Code
 ```python
-from froodo.quickstart import *
+from froodo import *
 
 # init network
 net = SegmentationModel().load()
@@ -76,6 +76,7 @@ experiment = AugmentationOODEvaluationComponent(
     metrics=metrics,
     methods=methods,
     seed=4321,
+    task_type=TaskType.SEGMENTATION
 )
 
 # run experiment

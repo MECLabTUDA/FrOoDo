@@ -1,16 +1,16 @@
 from torchvision.transforms.functional import InterpolationMode
 from torchvision.transforms import Resize
 
-from ..interfaces import (
-    OODAugmentationDataset,
+from ...interfaces import (
+    AugmentationDataset,
     SampleDataset,
     MultiFileOverlappingTilesDataset,
 )
-from ....ood.augmentations import OODAugmentation, InCrop, InResize, SizeInOODPipeline
-from ..adapter.adapter import AlreadyASampleAdapter, ImageLabelMetaAdapter
+from .....ood.augmentations import OODAugmentation, InCrop, InResize, SizeInOODPipeline
+from ...adapter.adapter import AlreadyASampleAdapter, ImageLabelMetaAdapter
 
 
-class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, SampleDataset):
+class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset):
     def __init__(
         self,
         folder="<path to original BCSS_TIF>",
@@ -50,18 +50,15 @@ class BCSS_Base_Dataset(MultiFileOverlappingTilesDataset, SampleDataset):
 
     def __getitem__(self, index):
         img, masks = super().__getitem__(index)
-        # img = self.resize(img.unsqueeze(0)).squeeze()
-        # for k, v in masks.items():
-        #    masks[k] = self.resize(v.unsqueeze(0).unsqueeze(0)).squeeze()
         return img, masks
 
 
 class BCSS_Adapted_Datasets:
     def __init__(self, size=(700, 700), split=(0.10, 0.20), **kwargs):
         train, val, test = BCSS_Base_Dataset(size=size).get_train_val_test_set(*split)
-        self.train = ImageLabelMetaAdapter(train, ignore_index=5, **kwargs)
-        self.val = ImageLabelMetaAdapter(val, ignore_index=5, **kwargs)
-        self.test = ImageLabelMetaAdapter(test, ignore_index=5, **kwargs)
+        self.train = ImageLabelMetaAdapter(train, ignore_index=5, name="BCSS", **kwargs)
+        self.val = ImageLabelMetaAdapter(val, ignore_index=5, name="BCSS", **kwargs)
+        self.test = ImageLabelMetaAdapter(test, ignore_index=5, name="BCSS", **kwargs)
 
 
 class BCSS_Adapted_Cropped_Resized_Datasets:
@@ -70,20 +67,21 @@ class BCSS_Adapted_Cropped_Resized_Datasets:
         pipeline = SizeInOODPipeline(
             in_augmentations=[InCrop((600, 600)), InResize(resize_size=(300, 300))]
         )
-        self.train = OODAugmentationDataset(
-            ImageLabelMetaAdapter(train, ignore_index=5, **kwargs), pipeline
+        self.train = AugmentationDataset(
+            ImageLabelMetaAdapter(train, ignore_index=5, name="BCSS", **kwargs),
+            pipeline,
         )
 
-        self.val = OODAugmentationDataset(
-            ImageLabelMetaAdapter(val, ignore_index=5, **kwargs), pipeline
+        self.val = AugmentationDataset(
+            ImageLabelMetaAdapter(val, ignore_index=5, name="BCSS", **kwargs), pipeline
         )
 
-        self.test = OODAugmentationDataset(
-            ImageLabelMetaAdapter(test, ignore_index=5, **kwargs), pipeline
+        self.test = AugmentationDataset(
+            ImageLabelMetaAdapter(test, ignore_index=5, name="BCSS", **kwargs), pipeline
         )
 
 
-class BCSS_OOD_Dataset(OODAugmentationDataset, SampleDataset):
+class BCSS_OOD_Dataset(AugmentationDataset, SampleDataset):
     def __init__(
         self,
         bcss_base: BCSS_Base_Dataset = None,

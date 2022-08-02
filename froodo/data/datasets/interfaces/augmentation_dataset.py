@@ -8,11 +8,11 @@ from ...samples import Sample
 
 from ....ood.augmentations import Augmentation, Nothing
 from ..adapter.adapter import DatasetAdapter
-from .utility_dataset import SampleDataset
+from . import SampleDataset
 from ..adapter import DatasetAdapter
 
 
-class OODAugmentationDataset(Dataset, SampleDataset):
+class AugmentationDataset(Dataset, SampleDataset):
     def __init__(
         self, dataset: SampleDataset, augmentation: Augmentation = None, seed=None
     ) -> None:
