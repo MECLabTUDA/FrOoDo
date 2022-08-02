@@ -20,7 +20,7 @@ If you use this framework in one of your projects please consider to cite
 
 ## Introduction
 
-![](imgs/FrOoDo.png "Framework Overview") 
+![](imgs/FrOoDo.PNG "Framework Overview") 
 
 This framework is made to tackle the problems of out of distrubtion data in digital pathology. During the data aquisition process different types of out of distribution data can occur e.g. artifacts like fat drops or unfocssed parts of the whole slide image. These ood data lower the segmentation metrics like the dice score in a critical way and it is therefore necessary to identify and remove ood data for the automatic segmentation with neural networks.
 
