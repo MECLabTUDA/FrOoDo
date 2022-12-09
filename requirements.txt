@@ -9,3 +9,4 @@ matplotlib
 zarr
 tifffile
 medmnist
+cloudpickle
