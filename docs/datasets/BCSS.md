@@ -68,7 +68,7 @@ cropped_resized_bcss_set.sample()
 ## FAQ
 Question | Answer
 :-- | --
-Why does it **takes so long** to load the dataset the **first time**? | When you first load the Dataset class it will produce a file that contains all valid regions satisfying your parameters. With this file the dataset will lazy load all tile regions which is much faster than loading in the whole WSI and more flexible that saving all tiles individually
+Why does it **take so long** to load the dataset the **first time**? | When you first load the Dataset class it will produce a file that contains all valid regions satisfying your parameters. With this file the dataset will lazy load all tile regions which is much faster than loading in the whole WSI and more flexible that saving all tiles individually
 
 
 ## References

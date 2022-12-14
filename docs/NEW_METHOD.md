@@ -1,7 +1,7 @@
 
 # Add new Method
 
-A new Method for OOD Detection needs to be an instance of Class OODMethod. As shown below the only methods that must be specified is the calculate_ood_score method which is returs a batch of scores (classification) or masks of scores (Segmentation) for a Sample Batch.
+A new Method for OOD Detection needs to be an instance of Class OODMethod. As shown below the only methods that must be specified is the calculate_ood_score method which returns a batch of scores (classification) or masks of scores (Segmentation) for a Sample Batch.
 ```python
 class OODMethod:
     def __init__(self, hyperparams={}) -> None:

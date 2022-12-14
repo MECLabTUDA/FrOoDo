@@ -44,7 +44,7 @@ pip install -r requirements.txt
 
 ## Demo
 
-This demo shows a typical ood evaluation scenario. A pathology dataset (in this case the BCSS dataset [2] ) is augmented with dark black spots which are marked as ood pixels. The images are then fed into a neual network and and ood score is comoputed with well known post-hoc ood methods (Odin [3] and Energy-Based [4] ). 
+This demo shows a typical ood evaluation scenario. A pathology dataset (in this case the BCSS dataset [2] ) is augmented with dark black spots which are marked as ood pixels. The images are then fed into a neual network and and ood score is comoputed with well known post-hoc ood methods (Odin [3] and Energy-Based [4]). 
 
 These scores are used by the AuRoc Metrics to calculate the seperability of in and ood data. Because of the augmentation there is information about the percentage of ood pixels in an image and the scores can therefore be calculated for different numbers of percentages.
 
@@ -84,7 +84,7 @@ experiment()
 ```
 ### Output
 
-The output of en experiment will be a sample of the evaluation data so see the correct augmentaion and the chosen visualized metrics.
+The output of an experiment will be a sample of the evaluation data to see the correct augmentation and the chosen visualized metrics.
 
 ![](imgs/samples.png "Augmentation Samples") 
 
@@ -102,9 +102,9 @@ The main advantage of froodo is that it can be extend easily because of clear de
 Title | Explanation|  Link
 -- | :-- | :--:
  Create new **Post-hoc OOD methods** | Learn how to implement your own post-hoc ood methods and how to evaluate it on your datasets |  [here](docs/NEW_METHOD.md)
-Create new **metrics** for your experiments | Evaluation is all about choosing the correct metrics for your experiment. Learn how to create new metrics and how to save the data in container during the experiment | [here](docs/NEW_METRIC.md)
+Create new **metrics** for your experiments | Evaluation is all about choosing the correct metrics for your experiment. Learn how to create new metrics and how to save the data in a container during the experiment | [here](docs/NEW_METRIC.md)
 All you need to know about **augmentations** | Extend the framework with new pathology augmentations and directly evaluate them without any change | [here](docs/AUGMENTATION.md)
-Dataset Adaptation | The frameworks uses an object "Sample" to process the input. Therefore your dataset needs to be adapted to this standard. Learn how to use the default adapters or how tpo create an own adapter for a more complex dataset | [here](docs/DATASET_ADAPTER.md)
+Dataset Adaptation | The frameworks uses an object "Sample" to process the input. Therefore your dataset needs to be adapted to this standard. Learn how to use the default adapters or how to create an own adapter for a more complex dataset | [here](docs/DATASET_ADAPTER.md)
 Different **OOD Strategies** | Besides augmentation there are other types of ood data. Learn which ood types are already included and how to create a new one | [here](docs/OOD_STRATEGY.md)
 How does the framework works internally?| Deep dive into the frameworks internal processes to better understand how it works and where possible errors can occur  | tbd
 Dataset installation | For a quick start we provide an installation guide for the used datasets  | [here](docs/datasets/DATASET_OVERVIEW.md)
