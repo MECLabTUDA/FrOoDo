@@ -11,3 +11,5 @@ tifffile
 medmnist
 cloudpickle
 opencv-python
+torchio
+torchvision
