@@ -28,7 +28,7 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
     data_adapter=xray_dataset,
-    augmentation=SampledAugmentation(DarkSpotsAugmentation(sample_intervals=[(0.1, 0.45)])),
+    augmentation=SampledAugmentation(MotionAugmentation(keep_ignored=False)),
     model=net,
     metrics=metrics,
     methods=methods,

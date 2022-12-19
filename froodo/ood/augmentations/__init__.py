@@ -26,3 +26,7 @@ from .patchwise import (
     ZoomInAugmentation,
     GaussianBlurAugmentation,
 )
+
+from .xray import (
+    MotionAugmentation,
+)
