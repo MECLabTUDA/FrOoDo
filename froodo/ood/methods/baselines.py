@@ -1,4 +1,3 @@
-from black import out
 import torch
 
 from .ood_methods import OODMethod

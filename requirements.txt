@@ -10,3 +10,4 @@ zarr
 tifffile
 medmnist
 cloudpickle
+opencv-python
