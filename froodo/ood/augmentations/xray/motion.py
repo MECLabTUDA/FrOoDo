@@ -44,7 +44,7 @@ class MotionAugmentation(OODAugmentation, SampableAugmentation):
         elif type(value) == float or type(value) == int:
             assert value > 0
             self._motion = (value, value)
-        self.transform = tio.transforms.RandomMotion()
+        self.transform = tio.transforms.RandomMotion(degrees=0, num_transforms=1)
 
     def _get_parameter_dict(self):
         return {"motion": self.motion[0]}
@@ -56,8 +56,10 @@ class MotionAugmentation(OODAugmentation, SampableAugmentation):
 
     def _augment(self, sample: Sample) -> Sample:
         x = sample["image"]
-        x = torch.unsqueeze(x, dim=0)
+        x = torch.unsqueeze(x, dim=3)
+        x = x.permute([0, 1, 3, 2])
         x = self.transform(x)
+        x = x.permute([0, 1, 3, 2])
         sample["image"] = x.squeeze()
 
         sample = full_image_ood(sample, self.keep_ignored)
