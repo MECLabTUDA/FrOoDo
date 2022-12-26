@@ -34,7 +34,7 @@ class CoinAugmentation(OODAugmentation):
         H, W, _ = img.shape
 
         overlay = imageio.imread(path) / 255.0
-        overlay = cv.resize(overlay, (0, 0), fx=0.25, fy=0.25)
+        overlay = cv.resize(overlay, (0, 0), fx=0.125, fy=0.125)
         overlay_alpha_channel = torch.from_numpy(overlay[:, :, 3])
 
 
@@ -50,8 +50,8 @@ class CoinAugmentation(OODAugmentation):
         #insert_height = self._clamp(insert_height, -H_overlay, H)
         #insert_width = self._clamp(insert_width, -W_overlay, W)
 
-        insert_height = self._clamp(insert_height, 0, H-1)
-        insert_width = self._clamp(insert_width, 0, W-1)
+        insert_height = self._clamp(insert_height, 0, H-H_overlay)
+        insert_width = self._clamp(insert_width, 0, W-W_overlay)
 
 
         ################# set brigthness
