@@ -61,7 +61,6 @@ class CoinAugmentation(OODAugmentation):
         foreground_pixel = overlay[H_overlay//2,W_overlay//2]
         _, _, foreground_brightness = colorsys.rgb_to_hsv(foreground_pixel[0], foreground_pixel[1], foreground_pixel[2])
 
-        print(background_brightness.item() / foreground_brightness)
 
         overlay = np.float32(overlay)
 
