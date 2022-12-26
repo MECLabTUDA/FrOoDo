@@ -12,6 +12,10 @@ import matplotlib.pyplot as plt
 from froodo.ood.augmentations.endoscopy.vignette import Vignette
 from froodo.ood.augmentations.endoscopy.coins import CoinAugmentation
 
+from froodo.data.datasets.examples.endoscopy.ksavir import KsavirDataset
+
+
+"""
 class KsavirDataset(Dataset,SampleDataset):
     def __init__(self, root_path: str) -> None:
         super().__init__()
@@ -29,7 +33,7 @@ class KsavirDataset(Dataset,SampleDataset):
         img = Image.open(self.root_path + "/" + self.images[index])
         image = self.convert_to_tensor(img) / 255
         return Sample(image)
-
+"""
 
 
 ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2")
