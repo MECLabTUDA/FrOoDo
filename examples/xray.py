@@ -1,5 +1,6 @@
 from examples.XrayDatasetAdapter import XrayDatasetAdapter
 from froodo import *
+from froodo.ood.augmentations.xray.artifacts.tubes import TubesAugmentation
 
 ############################################################
 
@@ -28,7 +29,7 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
     data_adapter=xray_dataset,
-    augmentation=SampledAugmentation(MotionAugmentation(keep_ignored=False)),
+    augmentation=SampledAugmentation(TubesAugmentation(keep_ignored=False)),
     model=net,
     metrics=metrics,
     methods=methods,
