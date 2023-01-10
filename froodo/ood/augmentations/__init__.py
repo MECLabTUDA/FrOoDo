@@ -29,5 +29,7 @@ from .patchwise import (
 
 from .xray import (
     MotionAugmentation,
-    NoiseAugmentation
+    NoiseAugmentation,
+    NoiseAAugmentation
+
 )
