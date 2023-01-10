@@ -20,7 +20,7 @@ class NoiseAAugmentation(OODAugmentation, SampableAugmentation):
         super().__init__()
         self.noise = noise
         if sample_intervals is None:
-            self.sample_intervals = [(1.2, 2.5)]
+            self.sample_intervals = [(0.001, 0.01)]
         else:
             self.sample_intervals = sample_intervals
         self.severity_class = (
@@ -43,7 +43,8 @@ class NoiseAAugmentation(OODAugmentation, SampableAugmentation):
         elif type(value) == float or type(value) == int:
             assert value > 0
             self._noise = (value, value)
-        self.transform = A.GaussNoise(mean=self.noise[0], var_limit=self.noise[1],per_channel=False)
+        # TODO: figure out how to use the sample intervals here for the var_limit
+        self.transform = A.GaussNoise(mean=0, var_limit=0.001, per_channel=False, p=1)
 
     def _apply_sampling(self):
         return super()._set_attr_to_uniform_samples_from_intervals(
@@ -55,8 +56,8 @@ class NoiseAAugmentation(OODAugmentation, SampableAugmentation):
 
     def _augment(self, sample: Sample) -> Sample:
         X = sample['image']
-        X = X.numpy()
+        X = X.numpy().transpose((1, 2, 0))
         img = self.transform(image=X)
-        sample['image'] = torch.from_numpy(img['image'])
+        sample['image'] = torch.from_numpy(img['image'].transpose(2, 0, 1))
         sample = full_image_ood(sample, self.keep_ignored)
         return sample
