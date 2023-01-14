@@ -1,4 +1,5 @@
 import os
+import random
 from froodo import SampleDataset
 from torch.utils.data import Dataset
 import torch
@@ -14,6 +15,7 @@ from froodo.ood.augmentations.endoscopy.coins import CoinAugmentation
 
 from froodo.data.datasets.examples.endoscopy.ksavir import KsavirDataset
 
+from torch.utils.data import DataLoader
 
 """
 class KsavirDataset(Dataset,SampleDataset):
@@ -38,9 +40,9 @@ class KsavirDataset(Dataset,SampleDataset):
 
 ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2")
 assert len(ksavir_dataset)==8000
-
-
-sample = ksavir_dataset[900]
+sample = random.randint(0,len(ksavir_dataset))
+print("sample Num: ", sample)
+sample = ksavir_dataset[sample]
 #sample = Nothing()(sample)
 
 """
@@ -52,7 +54,7 @@ plt.show()
 
 
 sample = CoinAugmentation()(sample)
-sample = Vignette()(sample)
+sample = Vignette(0.2)(sample)
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 2, 1)

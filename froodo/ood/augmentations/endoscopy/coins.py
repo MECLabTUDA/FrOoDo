@@ -26,6 +26,12 @@ class CoinAugmentation(OODAugmentation):
 
     
     def _augment(self, sample: Sample) -> Sample:
+        # Settings
+        align_brightness = True
+        sample_uniformly = True
+        random_rotate = True
+
+
         path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/coins/{random.choice(listdir('froodo/ood/augmentations/endoscopy/artifacts/imgs/coins'))}"
         
         img = sample.image.permute(1, 2, 0)     #CHW -> HWC
@@ -34,17 +40,37 @@ class CoinAugmentation(OODAugmentation):
         H, W, _ = img.shape
 
         overlay = imageio.imread(path) / 255.0
-        overlay = cv.resize(overlay, (0, 0), fx=0.125, fy=0.125)
+        overlay = cv.resize(overlay, (0, 0), fx=0.25, fy=0.25)
+
+        if random_rotate:
+            rotation_sample = np.random.randint(0, high=3+1)
+            if rotation_sample != 0:
+                if rotation_sample == 1:
+                    rotation_code = cv.ROTATE_90_CLOCKWISE
+                elif rotation_sample == 2:
+                    rotation_code = cv.ROTATE_90_COUNTERCLOCKWISE
+                else:
+                    rotation_code = cv.ROTATE_180
+                overlay = cv.rotate(overlay, rotation_code)
+
+
+
+
+
         overlay_alpha_channel = torch.from_numpy(overlay[:, :, 3])
 
 
         ################## compute location for insertion
         H_overlay, W_overlay, _ = overlay.shape
-        insert_height = int(np.random.normal(H/2, H/4))
-        insert_width = int(np.random.normal(W/2, W/4))
+        if sample_uniformly:
+            insert_height = np.random.randint(0, high=H-H_overlay +1)
+            insert_width =  np.random.randint(0, high=W-W_overlay +1)
+        else:
+            insert_height = int(np.random.normal(H/2, H/4))
+            insert_width = int(np.random.normal(W/2, W/4))
 
-        insert_height -= H_overlay//2
-        insert_width -= W_overlay//2
+            insert_height -= H_overlay//2
+            insert_width -= W_overlay//2
 
         ## these would be possible, but does not make that much sense
         #insert_height = self._clamp(insert_height, -H_overlay, H)
@@ -64,13 +90,13 @@ class CoinAugmentation(OODAugmentation):
 
         overlay = np.float32(overlay)
 
-        align_brightness = True
         if align_brightness:
             hsv = cv.cvtColor(overlay[:,:,:-1], cv.COLOR_RGB2HSV)
             #hsv[:,:,2] = background_brightness                                             # constant
             hsv[:,:,2] = hsv[:,:,2] * background_brightness.item() /  foreground_brightness # relative to foreground pixel 
             overlay = cv.cvtColor(hsv, cv.COLOR_HSV2RGB)
 
+            overlay = np.clip(overlay,a_min=0,a_max=1)
             overlay = np.dstack((overlay,overlay_alpha_channel))
 
 
