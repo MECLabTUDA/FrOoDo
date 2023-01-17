@@ -12,20 +12,20 @@ from ..utils import full_image_ood
 class MotionBlurAugmentation(OODAugmentation, SampableAugmentation):
     def __init__(
             self,
-            motion=2,
+            motion=5,
             sample_intervals=None,
             severity: SeverityMeasurement = None,
             keep_ignored=True,
     ) -> None:
         super().__init__()
-        self.motion = motion
+        self.motion = (motion, motion)
         if sample_intervals is None:
-            self.sample_intervals = [(0.2, 0.8), (1.2, 2)]
+            self.sample_intervals = [(5, 20)]
         else:
             self.sample_intervals = sample_intervals
         self.severity_class = (
             ParameterSeverityMeasurement(
-                "motionBlur",
+                "motion",
                 (self.sample_intervals[0][0], self.sample_intervals[-1][1]),
             )
             if severity is None
@@ -39,19 +39,16 @@ class MotionBlurAugmentation(OODAugmentation, SampableAugmentation):
 
     @motion.setter
     def motion(self, value):
-        if type(value) == tuple:
-            self._motion = value
-        elif type(value) == float or type(value) == int:
-            assert value > 0
-            self._motion = (value, value)
-        self.transform = A.MotionBlur(blur_limit=(3,7))
+        assert value > 3
+        self._motion = (value, value)
+        self.transform = A.MotionBlur(blur_limit=self._motion, allow_shifted=True, p=1)
 
     def _get_parameter_dict(self):
-        return {"motionBlur": self.motion[0]}
+        return {"motion": self.motion}
 
     def _apply_sampling(self):
         return super()._set_attr_to_uniform_samples_from_intervals(
-            {"motionBlur": self.sample_intervals}
+            {"motion": self.sample_intervals}
         )
 
     def _augment(self, sample: Sample) -> Sample:

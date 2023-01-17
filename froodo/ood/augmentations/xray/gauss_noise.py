@@ -18,7 +18,7 @@ class GaussianNoiseAugmentation(OODAugmentation, SampableAugmentation):
             keep_ignored=True,
     ) -> None:
         super().__init__()
-        self._sigma = sigma
+        self.sigma = sigma
         if sample_intervals is None:
             self.sample_intervals = [(0.001, 0.01)]
         else:
@@ -48,7 +48,7 @@ class GaussianNoiseAugmentation(OODAugmentation, SampableAugmentation):
         )
 
     def _get_parameter_dict(self):
-        return {"sigma": self._sigma}
+        return {"sigma": self.sigma}
 
     def _augment(self, sample: Sample) -> Sample:
         X = sample['image']

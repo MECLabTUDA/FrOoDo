@@ -28,9 +28,9 @@ from .patchwise import (
 )
 
 from .xray import (
-    MotionAugmentation,
-    MotionBlurAugmentation
-
+    MotionBlurAugmentation,
+    GaussianNoiseAugmentation,
+    TubesAugmentation
 )
 
 from .xray.artifacts import (
