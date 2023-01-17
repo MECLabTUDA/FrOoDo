@@ -14,9 +14,13 @@ import torch
 import colorsys
 import scipy
 
+from froodo.ood.severity.severity import PixelPercentageSeverityMeasurement
+
 class CoinAugmentation(OODAugmentation):
     def __init__(self) -> None:
         super().__init__()
+        self.scale = 0.25
+        self.severity_class = PixelPercentageSeverityMeasurement()
 
     def _apply_sampling(self):
         return super()._apply_sampling()
@@ -41,7 +45,7 @@ class CoinAugmentation(OODAugmentation):
         H, W, _ = img.shape
 
         overlay = imageio.imread(path) / 255.0
-        overlay = cv.resize(overlay, (0, 0), fx=0.25, fy=0.25)
+        overlay = cv.resize(overlay, (0, 0), fx=self.scale, fy=self.scale)
 
         if random_rotate:
             rotation_angle = np.random.randint(0, high=360)

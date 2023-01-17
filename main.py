@@ -9,6 +9,7 @@ from froodo import Sample
 
 import numpy as np
 import matplotlib.pyplot as plt
+from froodo.data.metadata.types import SampleMetadataCommonTypes
 
 from froodo.ood.augmentations.endoscopy.vignette import Vignette
 from froodo.ood.augmentations.endoscopy.coins import CoinAugmentation
@@ -41,6 +42,7 @@ class KsavirDataset(Dataset,SampleDataset):
 ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2")
 assert len(ksavir_dataset)==8000
 sample = random.randint(0,len(ksavir_dataset))
+#sample = 4875
 print("sample Num: ", sample)
 sample = ksavir_dataset[sample]
 #sample = Nothing()(sample)
@@ -61,10 +63,13 @@ ax = fig.add_subplot(1, 2, 1)
 plt.imshow(sample.image.permute(1,2,0))
 fig.add_subplot(1, 2, 2)
 plt.imshow(sample['ood_mask'])
-plt.show()
 
 
 
 #sample.plot()
 print(sample['ood_mask'])
-#print(torch.bincount(sample['ood_mask'].flatten().long()))
+print(torch.bincount(sample['ood_mask'].flatten().long()))
+print(sample["metadata"][SampleMetadataCommonTypes.OOD_SEVERITY.name])
+
+
+plt.show()
