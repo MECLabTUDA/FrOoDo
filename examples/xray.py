@@ -29,7 +29,7 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
     data_adapter=xray_dataset,
-    augmentation=SampledAugmentation(GaussianNoiseAugmentation(keep_ignored=False)),
+    augmentation=SampledAugmentation(TubesAugmentation(keep_ignored=False)),
     model=net,
     metrics=metrics,
     methods=methods,

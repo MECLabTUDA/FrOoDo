@@ -1,4 +1,3 @@
 from .motion import MotionAugmentation
-from .noise import NoiseAugmentation
-from .noise_alb import NoiseAAugmentation
+from .gauss_noise import GaussianNoiseAugmentation
 from .motion_alb import MotionBlurAugmentation

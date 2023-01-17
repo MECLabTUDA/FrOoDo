@@ -21,7 +21,7 @@ data_folder = os.path.join(this_dir, "imgs")
 class TubesAugmentation(OODAugmentation, SampableAugmentation):
     def __init__(
         self,
-        scale=1,
+        amount=1,
         path=None,
         severity: SeverityMeasurement = None,
         mask_threshold=0.3,
@@ -29,11 +29,12 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
         keep_ignored=True,
     ) -> None:
         super().__init__()
-        self.scale = scale
+        self._amount = amount
+        self.scale = 0.3
         self.path = path
         self.mask_threshold = mask_threshold
         if sample_intervals is None:
-            self.sample_intervals = [(0.3, 0.31)]
+            self.sample_intervals = [(1, 6)]
         else:
             self.sample_intervals = sample_intervals
         self.severity_class: SeverityMeasurement = (
@@ -43,39 +44,49 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
 
     def _apply_sampling(self):
         return super()._set_attr_to_uniform_samples_from_intervals(
-            {"scale": self.sample_intervals}
+            {"amount": self.sample_intervals}
         )
+
+    @property
+    def amount(self):
+        return self._amount
+
+    @amount.setter
+    def amount(self, value):
+        self._amount = int(value)
 
     def _augment(self, sample: Sample) -> Sample:
-        img, mask = self.transparentOverlay(
-            sample["image"],
-            sample["ood_mask"],
-            scale=self.scale,
-            overlay_path=join(
-                data_folder,
-                f"tubes/{random.choice(listdir(join(data_folder,'tubes')))}",
-            ) if self.path is None else self.path,
-            mask_threshold=self.mask_threshold,
-            width_slack=(0, 0),
-            height_slack=(0, 0),
-            ignore_index=None if not self.keep_ignored else sample.metadata["ignore_index"],
-        )
+        img, mask = sample["image"], sample["ood_mask"]
+
+        for i in range(self._amount):
+            img, mask = self.transparentOverlay(
+                img,
+                mask,
+                overlay_path=join(
+                    data_folder,
+                    f"tubes/{random.choice(listdir(join(data_folder,'tubes')))}",
+                ) if self.path is None else self.path,
+                mask_threshold=self.mask_threshold,
+                width_slack=(0, 0),
+                height_slack=(0, 0),
+                ignore_index=None if not self.keep_ignored else sample.metadata["ignore_index"],
+            )
+
         sample["image"] = img
         sample["ood_mask"] = mask
-
         return sample
 
     def transparentOverlay(
         self,
         src,
         mask,
-        scale=2,
         mask_threshold=0.3,
-        overlay_path="imgs/tubes/test.png",
+        overlay_path="imgs/tubes/test1.png",
         width_slack=(0.3, 0.3),
         height_slack=(0.3, 0.3),
         ignore_index=None,
     ):
+        scale = self.scale
         src = src.permute(1, 2, 0)
         overlay = imageio.imread(overlay_path) / 255.0
         overlay = cv.resize(overlay, (0, 0), fx=scale, fy=scale)
@@ -99,8 +110,8 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
         he_rot = randint(0, h_img - h_overlay)
         wi_rot = 0
 
-        wi = randint(0, w_img - w_overlay)
-        he = (h_overlay // 2)
+        #wi = randint(0, w_img - w_overlay)
+        #he = (h_overlay // 2)
 
         # move artifact only along axis perpendicular to tube direction
         if "rotated" in os.path.basename(overlay_path):
@@ -126,10 +137,10 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
         until_y_art = from_y_art + until_y - from_y
         until_x_art = from_x_art + until_x - from_x
 
-        print("--------------------------------------")
-        print(center_of_mass)
-        print(pos)
-        print((from_y_art, from_x_art), (until_y_art, until_x_art))
+        #print("--------------------------------------")
+        #print(center_of_mass)
+        #print(pos)
+        #print((from_y_art, from_x_art), (until_y_art, until_x_art))
 
         alpha = torch.from_numpy(overlay[:, :, 3])
         overlayed = (
