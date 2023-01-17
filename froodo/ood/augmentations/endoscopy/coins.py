@@ -12,6 +12,7 @@ import numpy as np
 import torch
 
 import colorsys
+import scipy
 
 class CoinAugmentation(OODAugmentation):
     def __init__(self) -> None:
@@ -43,15 +44,8 @@ class CoinAugmentation(OODAugmentation):
         overlay = cv.resize(overlay, (0, 0), fx=0.25, fy=0.25)
 
         if random_rotate:
-            rotation_sample = np.random.randint(0, high=3+1)
-            if rotation_sample != 0:
-                if rotation_sample == 1:
-                    rotation_code = cv.ROTATE_90_CLOCKWISE
-                elif rotation_sample == 2:
-                    rotation_code = cv.ROTATE_90_COUNTERCLOCKWISE
-                else:
-                    rotation_code = cv.ROTATE_180
-                overlay = cv.rotate(overlay, rotation_code)
+            rotation_angle = np.random.randint(0, high=360)
+            overlay = scipy.ndimage.rotate(overlay, rotation_angle)
 
 
 
