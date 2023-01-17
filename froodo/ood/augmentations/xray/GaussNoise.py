@@ -9,23 +9,23 @@ from ....data import Sample
 from ..utils import full_image_ood
 
 
-class NoiseAAugmentation(OODAugmentation, SampableAugmentation):
+class GaussianNoiseAugmentation(OODAugmentation, SampableAugmentation):
     def __init__(
             self,
-            noise=(0, 0.25),
+            sigma=0.25,
             sample_intervals=None,
             severity: SeverityMeasurement = None,
             keep_ignored=True,
     ) -> None:
         super().__init__()
-        self.noise = noise
+        self._sigma = sigma
         if sample_intervals is None:
             self.sample_intervals = [(0.001, 0.01)]
         else:
             self.sample_intervals = sample_intervals
         self.severity_class = (
             ParameterSeverityMeasurement(
-                "noise_alb", (self.sample_intervals[0][0], self.sample_intervals[-1][1])
+                "sigma", (self.sample_intervals[0][0], self.sample_intervals[-1][1])
             )
             if severity is None
             else severity
@@ -33,26 +33,22 @@ class NoiseAAugmentation(OODAugmentation, SampableAugmentation):
         self.keep_ignored = keep_ignored
 
     @property
-    def noise(self):
-        return self._noise
+    def sigma(self):
+        return self._sigma
 
-    @noise.setter
-    def noise(self, value):
-        if type(value) == tuple:
-            self._noise = value
-        elif type(value) == float or type(value) == int:
-            assert value > 0
-            self._noise = (value, value)
-        # TODO: figure out how to use the sample intervals here for the var_limit
-        self.transform = A.GaussNoise(mean=0, var_limit=0.001, per_channel=False, p=1)
+    @sigma.setter
+    def sigma(self, value):
+        self._sigma = value
+        # zero mean noise, variance is configurable
+        self.transform = A.GaussNoise(mean=0, var_limit=self._sigma, per_channel=False, p=1)
 
     def _apply_sampling(self):
         return super()._set_attr_to_uniform_samples_from_intervals(
-            {"noise_alb": self.sample_intervals}
+            {"sigma": self.sample_intervals}
         )
 
     def _get_parameter_dict(self):
-        return {"noise_alb": self._noise}
+        return {"sigma": self._sigma}
 
     def _augment(self, sample: Sample) -> Sample:
         X = sample['image']

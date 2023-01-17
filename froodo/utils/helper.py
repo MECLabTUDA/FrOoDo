@@ -8,6 +8,11 @@ def dict_default():
 
 
 def sample_from_intervals(intervals):
+    '''
+    sample one value from one of the given intervals
+    :param intervals:
+    :return: a single value
+    '''
     weights = np.array([i[1] - i[0] for i in intervals])
     interval_index = np.random.choice(
         list(range(len(intervals))), p=weights / weights.sum()
