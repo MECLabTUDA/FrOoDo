@@ -4,7 +4,7 @@ from froodo.ood.augmentations.xray.artifacts.tubes import TubesAugmentation
 
 ############################################################
 
-xray_dataset = XrayDatasetAdapter('~/MAS/M2/DLMB/datasets/chest_xray/test')
+xray_dataset = XrayDatasetAdapter('~/Downloads/chest_xray/test')
 # test if adaptation worked
 xray_dataset.sample()
 
@@ -29,7 +29,7 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
     data_adapter=xray_dataset,
-    augmentation=SampledAugmentation(NoiseAAugmentation(keep_ignored=False)),
+    augmentation=SampledAugmentation(TubesAugmentation(keep_ignored=False)),
     model=net,
     metrics=metrics,
     methods=methods,
