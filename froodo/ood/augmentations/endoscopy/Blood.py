@@ -20,13 +20,11 @@ from froodo.ood.severity.severity import ParameterSeverityMeasurement
 class BloodAugmentation(OODAugmentation):
     def __init__(self) -> None:
         super().__init__()
-        self.scale = 0.25
         self.severity_class = ParameterSeverityMeasurement("saturation_factor", (1,1.3))
 
 
     def _augment(self, sample: Sample) -> Sample:
         img = sample.image
-        print(img.shape)
         img = torchvision.transforms.functional.adjust_hue(img, -20/180)
 
         #find saturation_factor in [1,1.3]
