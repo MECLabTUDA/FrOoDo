@@ -10,6 +10,7 @@ from froodo import Sample
 import numpy as np
 import matplotlib.pyplot as plt
 from froodo.data.metadata.types import SampleMetadataCommonTypes
+from froodo.ood.augmentations.endoscopy.Blood import BloodAugmentation
 
 from froodo.ood.augmentations.endoscopy.vignette import Vignette
 from froodo.ood.augmentations.endoscopy.coins import CoinAugmentation
@@ -43,6 +44,7 @@ ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2")
 assert len(ksavir_dataset)==8000
 sample = random.randint(0,len(ksavir_dataset))
 #sample = 4875
+#sample = 5341
 print("sample Num: ", sample)
 sample = ksavir_dataset[sample]
 #sample = Nothing()(sample)
@@ -55,7 +57,8 @@ plt.show()
 """
 
 
-sample = CoinAugmentation()(sample)
+sample = BloodAugmentation()(sample)
+#sample = CoinAugmentation()(sample)
 sample = Vignette(0.2)(sample)
 
 fig = plt.figure()
