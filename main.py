@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from froodo.data.metadata.types import SampleMetadataCommonTypes
 from froodo.ood.augmentations.endoscopy.blood import BloodAugmentation
+from froodo.ood.augmentations.endoscopy.corn import CornAugmentation
 from froodo.ood.augmentations.endoscopy.pill import PillAugmentation
 from froodo.ood.augmentations.endoscopy.random_hue_shifts import RandomHueShiftAugmentation
 from froodo.ood.augmentations.endoscopy.random_value_shifts import RandomValueShiftAugmentation
@@ -49,7 +50,7 @@ sample = random.randint(0, len(ksavir_dataset))
 #sample = 4875
 #sample = 5341
 #sample = 3736
-sample = 1602
+#sample = 1602
 print("sample Num: ", sample)
 sample = ksavir_dataset[sample]
 #sample = Nothing()(sample)
@@ -65,8 +66,9 @@ plt.show()
 #sample = BloodAugmentation()(sample)
 #sample = RandomValueShiftAugmentation()(sample)
 #sample = CoinAugmentation()(sample)
+sample = CornAugmentation()(sample)
 #sample = PillAugmentation()(sample)
-sample = RandomHueShiftAugmentation()(sample)
+#sample = RandomHueShiftAugmentation()(sample)
 sample = Vignette(0.2)(sample)
 
 fig = plt.figure()
