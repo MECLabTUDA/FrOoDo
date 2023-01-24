@@ -18,7 +18,7 @@ class MotionBlurAugmentation(OODAugmentation, SampableAugmentation):
             keep_ignored=True,
     ) -> None:
         super().__init__()
-        self.motion = (motion, motion)
+        self.motion = motion
         if sample_intervals is None:
             self.sample_intervals = [(5, 20)]
         else:
@@ -39,6 +39,9 @@ class MotionBlurAugmentation(OODAugmentation, SampableAugmentation):
 
     @motion.setter
     def motion(self, value):
+        value = int(value)
+        if value % 2 == 0:
+            value = value + 1
         assert value > 3
         self._motion = (value, value)
         self.transform = A.MotionBlur(blur_limit=self._motion, allow_shifted=True, p=1)

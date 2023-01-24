@@ -4,8 +4,6 @@ from froodo import *
 ############################################################
 
 xray_dataset = XrayDatasetAdapter('~/Downloads/chest_xray/test')
-# test if adaptation worked
-xray_dataset.sample()
 
 #############################################################
 
