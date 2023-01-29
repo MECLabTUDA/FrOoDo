@@ -17,12 +17,15 @@ import torch
 import colorsys
 import scipy
 
+import matplotlib.pyplot as plt
+
 from froodo.ood.severity.severity import PixelPercentageSeverityMeasurement
+import skimage
 
 class PillAugmentation(OODAugmentation):
     def __init__(self) -> None:
         super().__init__()
-        self.scale = 0.15
+        self.scale = 0.15 * 0.5
         self.severity_class = PixelPercentageSeverityMeasurement()
 
     def _apply_sampling(self):
@@ -32,10 +35,17 @@ class PillAugmentation(OODAugmentation):
     def _clamp(self, value, miN, maX):
         return max(min(value, maX), miN)
 
-    
+    """
+    def _down_sample(self, img, rate):
+        r = skimage.measure.block_reduce(img[:,:,0], (rate,rate), np.mean)
+        g = skimage.measure.block_reduce(img[:,:,1], (rate,rate), np.mean)
+        b = skimage.measure.block_reduce(img[:,:,2], (rate,rate), np.mean)
+        return np.stack((r, g, b), axis=-1)
+    """
+
     def _augment(self, sample: Sample) -> Sample:
         # Settings
-        align_brightness = True
+        align_brightness = True    #True
         sample_uniformly = True
         random_rotate = True
 
@@ -43,6 +53,23 @@ class PillAugmentation(OODAugmentation):
         path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/pills/{random.choice(listdir('froodo/ood/augmentations/endoscopy/artifacts/imgs/pills'))}"
         
         img = sample.image.permute(1, 2, 0)     #CHW -> HWC
+
+        img = img.numpy()
+        img *= 255
+        img = img.astype(np.uint8)
+
+        img_denoised = cv.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 10)
+        img_denoised = img_denoised.tolist()
+        img_denoised = np.array(img_denoised)
+
+        noise = img - img_denoised
+
+        noise = torch.from_numpy(noise.astype(np.float32))
+        noise /= 255
+
+        img = torch.from_numpy(img_denoised.astype(np.float32))
+        img /= 255
+
         ood_mask = sample['ood_mask']
 
         H, W, _ = img.shape
@@ -125,6 +152,9 @@ class PillAugmentation(OODAugmentation):
             overlay[from_y_art:until_y_art, from_x_art:until_x_art, 3] > 0.3
         )
         ood_mask[from_y:until_y, from_x:until_x][ood_indices] = 0
+
+
+        img += noise
 
         sample["image"] = img.permute(2,0,1)    #HWC -> CHW
         sample["ood_mask"] = ood_mask

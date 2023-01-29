@@ -31,7 +31,7 @@ class RandomValueShiftAugmentation(OODAugmentation):
         #find brightness_factor in (0, infty)
 
         # amount in (0, 1) where 0 has the highest probability
-        amount = np.abs(np.random.normal(0, 1))
+        amount = np.abs(np.random.normal(0, 0.4))
         amount = max(min(amount, 1-self.EPS), 0 + self.EPS)       #clamp to (0, 1)
 
         self.amount = amount
