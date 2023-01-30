@@ -44,7 +44,7 @@ class KsavirDataset(Dataset,SampleDataset):
 """
 
 
-ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2")
+ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2", True)
 assert len(ksavir_dataset)==8000
 sample = random.randint(0, len(ksavir_dataset))
 #sample = 4875
@@ -52,6 +52,7 @@ sample = random.randint(0, len(ksavir_dataset))
 #sample = 3736
 #sample = 1602
 #sample = 5731
+#sample = 3903
 print("sample Num: ", sample)
 sample = ksavir_dataset[sample]
 #sample = Nothing()(sample)
