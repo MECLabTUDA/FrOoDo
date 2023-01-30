@@ -50,7 +50,8 @@ sample = random.randint(0, len(ksavir_dataset))
 #sample = 4875
 #sample = 5341
 #sample = 3736
-sample = 1602
+#sample = 1602
+#sample = 5731
 print("sample Num: ", sample)
 sample = ksavir_dataset[sample]
 #sample = Nothing()(sample)
@@ -66,8 +67,8 @@ plt.show()
 #sample = BloodAugmentation()(sample)
 #sample = RandomValueShiftAugmentation()(sample)
 #sample = CoinAugmentation()(sample)
-#sample = CornAugmentation()(sample)
-sample = PillAugmentation()(sample)
+sample = CornAugmentation()(sample)
+#sample = PillAugmentation()(sample)
 #sample = RandomHueShiftAugmentation()(sample)
 sample = Vignette(0.2)(sample)
 

@@ -59,7 +59,7 @@ class PillAugmentation(OODAugmentation):
         img *= 255
         img = img.astype(np.uint8)
 
-        img_denoised = cv.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 10)
+        img_denoised = cv.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 7)
         img_denoised = img_denoised.tolist()
         img_denoised = np.array(img_denoised)
 
