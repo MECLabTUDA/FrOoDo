@@ -40,6 +40,23 @@ class CoinAugmentation(OODAugmentation):
         path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/coins/{random.choice(listdir('froodo/ood/augmentations/endoscopy/artifacts/imgs/coins'))}"
         
         img = sample.image.permute(1, 2, 0)     #CHW -> HWC
+
+        img = img.numpy()
+        img *= 255
+        img = img.astype(np.uint8)
+
+        img_denoised = cv.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 7)
+        img_denoised = img_denoised.tolist()
+        img_denoised = np.array(img_denoised)
+
+        noise = img - img_denoised
+
+        noise = torch.from_numpy(noise.astype(np.float32))
+        noise /= 255
+
+        img = torch.from_numpy(img_denoised.astype(np.float32))
+        img /= 255
+
         ood_mask = sample['ood_mask']
 
         H, W, _ = img.shape
@@ -123,6 +140,9 @@ class CoinAugmentation(OODAugmentation):
         )
         ood_mask[from_y:until_y, from_x:until_x][ood_indices] = 0
 
+        img += noise
+
+        
         sample["image"] = img.permute(2,0,1)    #HWC -> CHW
         sample["ood_mask"] = ood_mask
 
