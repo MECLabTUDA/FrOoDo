@@ -20,7 +20,7 @@ import scipy
 import matplotlib.pyplot as plt
 
 from froodo.ood.severity.severity import PixelPercentageSeverityMeasurement
-import skimage
+from scipy.ndimage.filters import gaussian_filter
 
 class PillAugmentation(OODAugmentation):
     def __init__(self) -> None:
@@ -48,6 +48,7 @@ class PillAugmentation(OODAugmentation):
         align_brightness = True    #True
         sample_uniformly = True
         random_rotate = True
+        apply_gaussian_filter = True
 
 
         path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/pills/{random.choice(listdir('froodo/ood/augmentations/endoscopy/artifacts/imgs/pills'))}"
@@ -76,6 +77,10 @@ class PillAugmentation(OODAugmentation):
 
         overlay = imageio.imread(path) / 255.0
         overlay = cv.resize(overlay, (0, 0), fx=self.scale, fy=self.scale)
+
+        if apply_gaussian_filter:
+            overlay = gaussian_filter(overlay, 0.5, mode='constant')
+
 
         if random_rotate:
             rotation_angle = np.random.randint(0, high=360)
