@@ -1,3 +1,5 @@
+from torchvision.models import ResNet50_Weights, resnet50
+
 from examples.XrayDatasetAdapter import XrayDatasetAdapter
 from froodo import *
 
@@ -9,6 +11,9 @@ xray_dataset = XrayDatasetAdapter('~/Downloads/chest_xray/test')
 
 # init network
 net = ResNet18(3, 2).cuda()
+
+weights = ResNet50_Weights.DEFAULT
+net = resnet50(weights=weights)
 
 # choose metrics
 metrics = [

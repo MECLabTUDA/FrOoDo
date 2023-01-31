@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 import torch
 
 from examples.XrayDatasetAdapter import XrayDatasetAdapter
-from froodo import TubesAugmentation, Nothing, GaussianNoiseAugmentation, SampleMetadataCommonTypes
+from froodo import TubesAugmentation, Nothing, GaussianNoiseAugmentation, SampleMetadataCommonTypes, \
+    MotionBlurAugmentation
+from froodo.ood.augmentations.xray.artifacts.coin import CoinAugmentation
+from froodo.ood.augmentations.xray.artifacts.foreign_bodies import ForeignBodiesAugmentation
 
 xray_dataset = XrayDatasetAdapter('~/Downloads/chest_xray/test')
 #sampleIndex = random.randint(0, len(xray_dataset))
@@ -18,10 +21,13 @@ sample = xray_dataset[sampleIndex]
 augmentations = [
     #[Nothing(), Nothing()],
     [TubesAugmentation(amount=1), TubesAugmentation(amount=6)],
-    [GaussianNoiseAugmentation(sigma=0.001), GaussianNoiseAugmentation(sigma=0.01)]
+    [ForeignBodiesAugmentation(amount=1), ForeignBodiesAugmentation(amount=6)],
+    [CoinAugmentation(amount=1), CoinAugmentation(amount=2)],
+    [GaussianNoiseAugmentation(sigma=0.001), GaussianNoiseAugmentation(sigma=0.01)],
+    [MotionBlurAugmentation(motion=5), MotionBlurAugmentation(motion=20)]
 ]
 
-titles = ["Tubes", "Noise"]
+titles = ["Tubes", "Foreign Bodies", "Coin", "Noise", "Motion"]
 
 f, ax = plt.subplots(4, len(augmentations), figsize=(5 * len(augmentations), 20))
 
