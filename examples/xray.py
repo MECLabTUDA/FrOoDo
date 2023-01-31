@@ -4,17 +4,11 @@ from froodo import *
 ############################################################
 
 xray_dataset = XrayDatasetAdapter('~/Downloads/chest_xray/test')
-# test if adaptation worked
-xray_dataset.sample()
 
 #############################################################
 
 # init network
-net = ResNet50(3, 9)
-#net.load_state_dict(
-    # load in your weights
-#)
-#net = net.cuda()
+net = ResNet18(3, 2).cuda()
 
 # choose metrics
 metrics = [
@@ -28,13 +22,13 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
     data_adapter=xray_dataset,
-    augmentation=SampledAugmentation(MotionBlurAugmentation(keep_ignored=False)),
+    augmentation=SampledAugmentation(TubesAugmentation(keep_ignored=False)),
     model=net,
     metrics=metrics,
     methods=methods,
     seed=4321,
     task_type=TaskType.CLASSIFICATION,
-    batch_size=128,
+    batch_size=64,
     num_workers=0
 )
 
