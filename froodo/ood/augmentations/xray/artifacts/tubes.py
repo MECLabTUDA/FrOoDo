@@ -1,6 +1,9 @@
 import random
 from os import listdir
 from os.path import join
+
+import matplotlib.pyplot as plt
+import scipy
 import torch
 import numpy as np
 import cv2 as cv
@@ -18,6 +21,22 @@ this_dir, this_filename = os.path.split(__file__)
 data_folder = os.path.join(this_dir, "imgs")
 
 
+def crop(img):
+    # lower bound for each channel
+    lower = (0, 0, 0, 0)
+    # upper bound for each channel
+    upper = (0.05, 0.05, 0.05, 0.05)
+    crop_mask = cv.inRange(img, lower, upper)
+
+    # get bounds of background pixels
+    background = np.where(crop_mask == 0)
+    xmin, ymin, xmax, ymax = np.min(background[1]), np.min(background[0]), \
+        np.max(background[1]), np.max(background[0])
+    cropped = img[ymin:ymax, xmin:xmax]
+
+    return cropped
+
+
 class TubesAugmentation(OODAugmentation, SampableAugmentation):
     def __init__(
         self,
@@ -29,8 +48,8 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
         keep_ignored=True,
     ) -> None:
         super().__init__()
-        self._amount = amount
-        self.scale = 0.3
+        self.amount = amount
+        self.scale = 0.25
         self.path = path
         self.mask_threshold = mask_threshold
         if sample_intervals is None:
@@ -58,8 +77,8 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
     def _augment(self, sample: Sample) -> Sample:
         img, mask = sample["image"], sample["ood_mask"]
 
-        for i in range(self._amount):
-            img, mask = self.transparentOverlay(
+        for i in range(self.amount):
+            img, mask = self.transparent_overlay(
                 img,
                 mask,
                 overlay_path=join(
@@ -67,8 +86,6 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
                     f"tubes/{random.choice(listdir(join(data_folder,'tubes')))}",
                 ) if self.path is None else self.path,
                 mask_threshold=self.mask_threshold,
-                width_slack=(0, 0),
-                height_slack=(0, 0),
                 ignore_index=None if not self.keep_ignored else sample.metadata["ignore_index"],
             )
 
@@ -76,71 +93,75 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
         sample["ood_mask"] = mask
         return sample
 
-    def transparentOverlay(
+    def transparent_overlay(
         self,
         src,
         mask,
+        overlay_path,
         mask_threshold=0.3,
-        overlay_path="imgs/tubes/test1.png",
-        width_slack=(0.3, 0.3),
-        height_slack=(0.3, 0.3),
         ignore_index=None,
     ):
         scale = self.scale
         src = src.permute(1, 2, 0)
         overlay = imageio.imread(overlay_path) / 255.0
         overlay = cv.resize(overlay, (0, 0), fx=scale, fy=scale)
-        center_of_mass = np.round(ndimage.measurements.center_of_mass(overlay[..., 3])).astype(
-            np.int64
-        )
-        h_overlay, w_overlay, _ = overlay.shape
+
+        # randomly flip artifact
+        if randint(0, 1):
+            overlay = np.flip(overlay, axis=1)
+
+        base_rotation = random.choice([-90, 0, 90])
+        rotation_angle = np.random.randint(-20, high=20)
+        overlay = scipy.ndimage.rotate(overlay, base_rotation + rotation_angle, order=1)
+
+        overlay = crop(overlay)
+
         h_img, w_img, _ = src.shape
+        h_overlay, w_overlay, _ = overlay.shape
 
-        min_vert = -int(h_overlay * height_slack[0])
-        max_vert = max(min_vert + 1, h_img + int(h_overlay * height_slack[1]))
-        he = randint(
-            min_vert,
-            max_vert,
-        )
+        if base_rotation == 0:
+            from_y_art = 0
+            until_y_art = from_y_art + h_overlay
 
-        min_hor = -int(w_overlay * width_slack[0])
-        max_hor = max(min_hor + 1, w_img + int(w_overlay * width_slack[1]))
-        wi = randint(min_hor, max_hor)
+            from_x_art = 0
+            until_x_art = from_x_art + w_overlay
 
-        he_rot = randint(0, h_img - h_overlay)
-        wi_rot = 0
+            x_slack = w_img - w_overlay
+            from_x = randint(0, x_slack)
+            until_x = from_x + w_overlay
 
-        #wi = randint(0, w_img - w_overlay)
-        #he = (h_overlay // 2)
+            from_y = h_img - h_overlay
+            until_y = h_img
 
-        # move artifact only along axis perpendicular to tube direction
-        if "rotated" in os.path.basename(overlay_path):
-            pos = (he_rot - center_of_mass[0], -center_of_mass[1])
+        elif base_rotation == 90:
+            from_y_art = 0
+            until_y_art = from_y_art + h_overlay
+
+            from_x_art = 0
+            until_x_art = from_x_art + w_overlay
+
+            from_x = w_img - w_overlay
+            until_x = w_img
+
+            y_slack = h_img - h_overlay
+            from_y = randint(0, y_slack)
+            until_y = from_y + h_overlay
+
+        elif base_rotation == -90:
+            from_y_art = 0
+            until_y_art = from_y_art + h_overlay
+
+            from_x_art = 0
+            until_x_art = from_x_art + w_overlay
+
+            from_x = 0
+            until_x = from_x + w_overlay
+
+            y_slack = h_img - h_overlay
+            from_y = randint(0, y_slack)
+            until_y = from_y + h_overlay
         else:
-            pos = (center_of_mass[0], wi - center_of_mass[1])
-
-        # TODO: for tube artifacts: tube should extend to the edge of the overlay and don't apply any translation in the tube direction
-        # TODO: translation in other direction should be limited to stay within torso
-        # TODO: add rotation (in 90 degree steps, so we don't need separate tube pictures)
-        # TODO: severity should increase amount of overlayed tubes
-
-        # check for out of bounds artifact
-        assert pos[0] + h_overlay > 0 and pos[0] - h_overlay - h_img < 0
-        assert pos[1] + w_overlay > 0 and pos[1] - w_overlay - w_img < 0
-
-        from_y_art = max(-pos[0], 0)
-        from_x_art = max(-pos[1], 0)
-        from_y = -min(-pos[0], 0)
-        from_x = -min(-pos[1], 0)
-        until_y = min(h_overlay - from_y_art + from_y, h_img)
-        until_x = min(w_overlay - from_x_art + from_x, w_img)
-        until_y_art = from_y_art + until_y - from_y
-        until_x_art = from_x_art + until_x - from_x
-
-        #print("--------------------------------------")
-        #print(center_of_mass)
-        #print(pos)
-        #print((from_y_art, from_x_art), (until_y_art, until_x_art))
+            raise "Internal Error: unsupported rotation for tubes augmentation"
 
         alpha = torch.from_numpy(overlay[:, :, 3])
         overlayed = (
