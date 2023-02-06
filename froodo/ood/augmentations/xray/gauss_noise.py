@@ -55,5 +55,5 @@ class GaussianNoiseAugmentation(OODAugmentation, SampableAugmentation):
         X = X.numpy().transpose((1, 2, 0))
         img = self.transform(image=X)
         sample['image'] = torch.from_numpy(img['image'].transpose(2, 0, 1))
-        #sample = full_image_ood(sample, self.keep_ignored)
+        sample = full_image_ood(sample, self.keep_ignored)
         return sample

@@ -1,19 +1,17 @@
-from torchvision.models import ResNet50_Weights, resnet50
-
-from examples.XrayDatasetAdapter import XrayDatasetAdapter
+from froodo.data.datasets.examples.xray.pneumonia import PneumoniaDataSetAdapter
 from froodo import *
+from froodo.ood.augmentations.xray.artifacts.coin import CoinAugmentation
 
 ############################################################
 
-xray_dataset = XrayDatasetAdapter('~/Downloads/chest_xray/test')
+xray_dataset = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
 
 #############################################################
 
 # init network
-net = ResNet18(3, 2).cuda()
-
-weights = ResNet50_Weights.DEFAULT
-net = resnet50(weights=weights)
+model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=False, num_classes=2)
+model.load_state_dict(torch.load("./model.pth"))
+model = model.cuda()
 
 # choose metrics
 metrics = [
@@ -27,8 +25,8 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
     data_adapter=xray_dataset,
-    augmentation=SampledAugmentation(TubesAugmentation(keep_ignored=False)),
-    model=net,
+    augmentation=SampledAugmentation(MotionBlurAugmentation(keep_ignored=False)),
+    model=model,
     metrics=metrics,
     methods=methods,
     seed=4321,

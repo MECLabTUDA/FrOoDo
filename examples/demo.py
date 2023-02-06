@@ -1,30 +1,26 @@
 from copy import deepcopy
 
 import matplotlib.pyplot as plt
-import torch
 
-from examples.XrayDatasetAdapter import XrayDatasetAdapter
-from froodo import TubesAugmentation, Nothing, GaussianNoiseAugmentation, SampleMetadataCommonTypes, \
-    MotionBlurAugmentation
+from froodo.data.datasets.examples.xray.pneumonia import PneumoniaDataSetAdapter
+from froodo import TubesAugmentation, GaussianNoiseAugmentation, MotionBlurAugmentation
 from froodo.ood.augmentations.xray.artifacts.coin import CoinAugmentation
 from froodo.ood.augmentations.xray.artifacts.foreign_bodies import ForeignBodiesAugmentation
 
-xray_dataset = XrayDatasetAdapter('~/Downloads/chest_xray/test')
-#sampleIndex = random.randint(0, len(xray_dataset))
+dataset_adapter = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
 sampleIndex = 100
-sample = xray_dataset[sampleIndex]
+sample = dataset_adapter[sampleIndex]
 
 #single = GaussianNoiseAugmentation(sigma=0.01)(sample)
 #print(single["metadata"][SampleMetadataCommonTypes.OOD_SEVERITY.name])
 #sample = xray_dataset[sampleIndex]
 
 augmentations = [
-    #[Nothing(), Nothing()],
-    [TubesAugmentation(amount=1), TubesAugmentation(amount=6)],
-    [ForeignBodiesAugmentation(amount=1), ForeignBodiesAugmentation(amount=6)],
-    [CoinAugmentation(amount=1), CoinAugmentation(amount=2)],
-    [GaussianNoiseAugmentation(sigma=0.001), GaussianNoiseAugmentation(sigma=0.01)],
-    [MotionBlurAugmentation(motion=5), MotionBlurAugmentation(motion=20)]
+    [TubesAugmentation(amount=1, keep_ignored=False), TubesAugmentation(amount=6, keep_ignored=False)],
+    [ForeignBodiesAugmentation(amount=1, keep_ignored=False), ForeignBodiesAugmentation(amount=6, keep_ignored=False)],
+    [CoinAugmentation(amount=1, keep_ignored=False), CoinAugmentation(amount=2, keep_ignored=False)],
+    [GaussianNoiseAugmentation(sigma=0.001, keep_ignored=False), GaussianNoiseAugmentation(sigma=0.01, keep_ignored=False)],
+    [MotionBlurAugmentation(motion=5, keep_ignored=False), MotionBlurAugmentation(motion=20, keep_ignored=False)]
 ]
 
 titles = ["Tubes", "Foreign Bodies", "Coin", "Noise", "Motion"]
