@@ -30,7 +30,10 @@ from .patchwise import (
 from .xray import (
     MotionBlurAugmentation,
     GaussianNoiseAugmentation,
-    TubesAugmentation
+    TubesAugmentation,
+    NailsAugmentation,
+    CoinAugmentation,
+    ForeignBodiesAugmentation
 )
 
 from .xray.artifacts import (

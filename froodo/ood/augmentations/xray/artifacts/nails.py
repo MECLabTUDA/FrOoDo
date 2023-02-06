@@ -20,7 +20,7 @@ this_dir, this_filename = os.path.split(__file__)
 data_folder = os.path.join(this_dir, "imgs")
 
 
-class ForeignBodiesAugmentation(OODAugmentation, SampableAugmentation):
+class NailsAugmentation(OODAugmentation, SampableAugmentation):
     def __init__(
         self,
         amount=1,
@@ -66,7 +66,7 @@ class ForeignBodiesAugmentation(OODAugmentation, SampableAugmentation):
                 mask,
                 overlay_path=join(
                     data_folder,
-                    f"foreign/{random.choice(listdir(join(data_folder,'foreign')))}",
+                    f"nails/{random.choice(listdir(join(data_folder,'nails')))}",
                 ) if self.path is None else self.path,
                 mask_threshold=self.mask_threshold,
                 ignore_index=None if not self.keep_ignored else sample.metadata["ignore_index"],

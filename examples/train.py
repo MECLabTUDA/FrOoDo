@@ -5,7 +5,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from froodo.data.datasets.examples.xray.pneumonia import PneumoniaDataSetAdapter
+from froodo import PneumoniaDataSetAdapter
 
 '''
 This model training script was kindly provided by the other project group and adapted to the pneumonia data set. 

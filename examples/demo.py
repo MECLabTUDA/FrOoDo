@@ -1,11 +1,6 @@
 from copy import deepcopy
-
 import matplotlib.pyplot as plt
-
-from froodo.data.datasets.examples.xray.pneumonia import PneumoniaDataSetAdapter
-from froodo import TubesAugmentation, GaussianNoiseAugmentation, MotionBlurAugmentation
-from froodo.ood.augmentations.xray.artifacts.coin import CoinAugmentation
-from froodo.ood.augmentations.xray.artifacts.foreign_bodies import ForeignBodiesAugmentation
+from froodo import PneumoniaDataSetAdapter, TubesAugmentation, ForeignBodiesAugmentation, CoinAugmentation, NailsAugmentation, GaussianNoiseAugmentation, MotionBlurAugmentation
 
 dataset_adapter = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
 sampleIndex = 100
@@ -19,11 +14,12 @@ augmentations = [
     [TubesAugmentation(amount=1, keep_ignored=False), TubesAugmentation(amount=6, keep_ignored=False)],
     [ForeignBodiesAugmentation(amount=1, keep_ignored=False), ForeignBodiesAugmentation(amount=6, keep_ignored=False)],
     [CoinAugmentation(amount=1, keep_ignored=False), CoinAugmentation(amount=2, keep_ignored=False)],
+    [NailsAugmentation(amount=1, keep_ignored=False), NailsAugmentation(amount=3, keep_ignored=False)],
     [GaussianNoiseAugmentation(sigma=0.001, keep_ignored=False), GaussianNoiseAugmentation(sigma=0.01, keep_ignored=False)],
     [MotionBlurAugmentation(motion=5, keep_ignored=False), MotionBlurAugmentation(motion=20, keep_ignored=False)]
 ]
 
-titles = ["Tubes", "Foreign Bodies", "Coin", "Noise", "Motion"]
+titles = ["Tubes", "Foreign Bodies", "Coin", "Nails", "Noise", "Motion"]
 
 f, ax = plt.subplots(4, len(augmentations), figsize=(5 * len(augmentations), 20))
 

@@ -5,4 +5,6 @@ from .pathology.bcss import (
     BCSS_OOD_Dataset,
 )
 
+from .xray.pneumonia import PneumoniaDataSetAdapter
+
 from .pathology.path_mnist import *

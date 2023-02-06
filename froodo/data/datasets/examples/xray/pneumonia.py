@@ -1,7 +1,7 @@
 from os import path
-
 import torchvision as tv
-from froodo import *
+import torch
+from ...adapter.adapter import DatasetAdapter, Sample
 
 '''
 Uses the chest xray pneumonia dataset from: https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
