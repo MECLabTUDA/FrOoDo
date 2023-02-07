@@ -19,6 +19,16 @@ from froodo.ood.augmentations.endoscopy.random_value_shifts import RandomValueSh
 from froodo.ood.augmentations.endoscopy.vignette import Vignette
 from froodo.ood.augmentations.endoscopy.coins import CoinAugmentation
 
+from froodo.ood.augmentations.endoscopy.kidney_bean import KidneyBeanAugmentation
+from froodo.ood.augmentations.endoscopy.chili import ChiliAugmentation
+from froodo.ood.augmentations.endoscopy.green_onion import GreenOnionAugmentation
+from froodo.ood.augmentations.endoscopy.pumpkin_seed import PumpkinSeedAugmentation
+from froodo.ood.augmentations.endoscopy.melon_seed import MelonSeedAugmentation
+from froodo.ood.augmentations.endoscopy.oats import OatsAugmentation
+from froodo.ood.augmentations.endoscopy.coin_v2 import CoinV2Augmentation
+from froodo.ood.augmentations.endoscopy.pill_v2 import PillV2Augmentation
+
+
 from froodo.data.datasets.examples.endoscopy.ksavir import KsavirDataset
 
 from torch.utils.data import DataLoader
@@ -44,7 +54,7 @@ class KsavirDataset(Dataset,SampleDataset):
 """
 
 
-ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2", True)
+ksavir_dataset = KsavirDataset("../FrOoDo/Datasets/kvasir-dataset-v2", True)
 assert len(ksavir_dataset)==8000
 sample = random.randint(0, len(ksavir_dataset))
 #sample = 4875
@@ -67,10 +77,22 @@ plt.show()
 
 #sample = BloodAugmentation()(sample)
 #sample = RandomValueShiftAugmentation()(sample)
-sample = CoinAugmentation()(sample)
+#sample = CoinAugmentation()(sample)
 #sample = CornAugmentation()(sample)
 #sample = PillAugmentation()(sample)
 #sample = RandomHueShiftAugmentation()(sample)
+#sample = KidneyBeanAugmentation()(sample)
+#sample = GreenOnionAugmentation()(sample)
+#sample = ChiliAugmentation()(sample)
+#sample = PumpkinSeedAugmentation()(sample)
+#sample = MelonSeedAugmentation()(sample)
+sample = OatsAugmentation()(sample)
+sample = CoinV2Augmentation()(sample)
+sample = PillV2Augmentation()(sample)
+
+
+
+
 sample = Vignette(0.2)(sample)
 
 fig = plt.figure()
