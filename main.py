@@ -1,4 +1,5 @@
 import os
+import random
 from froodo import SampleDataset
 from torch.utils.data import Dataset
 import torch
@@ -8,12 +9,19 @@ from froodo import Sample
 
 import numpy as np
 import matplotlib.pyplot as plt
+from froodo.data.metadata.types import SampleMetadataCommonTypes
+from froodo.ood.augmentations.endoscopy.blood import BloodAugmentation
+from froodo.ood.augmentations.endoscopy.corn import CornAugmentation
+from froodo.ood.augmentations.endoscopy.pill import PillAugmentation
+from froodo.ood.augmentations.endoscopy.random_hue_shifts import RandomHueShiftAugmentation
+from froodo.ood.augmentations.endoscopy.random_value_shifts import RandomValueShiftAugmentation
 
 from froodo.ood.augmentations.endoscopy.vignette import Vignette
 from froodo.ood.augmentations.endoscopy.coins import CoinAugmentation
 
 from froodo.data.datasets.examples.endoscopy.ksavir import KsavirDataset
 
+from torch.utils.data import DataLoader
 
 """
 class KsavirDataset(Dataset,SampleDataset):
@@ -36,11 +44,17 @@ class KsavirDataset(Dataset,SampleDataset):
 """
 
 
-ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2")
+ksavir_dataset = KsavirDataset("G:\FrOoDo\Datasets\kvasir-dataset-v2", True)
 assert len(ksavir_dataset)==8000
-
-
-sample = ksavir_dataset[900]
+sample = random.randint(0, len(ksavir_dataset))
+#sample = 4875
+#sample = 5341
+#sample = 3736
+#sample = 1602
+#sample = 5731
+#sample = 3903
+print("sample Num: ", sample)
+sample = ksavir_dataset[sample]
 #sample = Nothing()(sample)
 
 """
@@ -51,18 +65,26 @@ plt.show()
 """
 
 
+#sample = BloodAugmentation()(sample)
+#sample = RandomValueShiftAugmentation()(sample)
 sample = CoinAugmentation()(sample)
-sample = Vignette()(sample)
+#sample = CornAugmentation()(sample)
+#sample = PillAugmentation()(sample)
+#sample = RandomHueShiftAugmentation()(sample)
+sample = Vignette(0.2)(sample)
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 2, 1)
 plt.imshow(sample.image.permute(1,2,0))
 fig.add_subplot(1, 2, 2)
 plt.imshow(sample['ood_mask'])
-plt.show()
 
 
 
 #sample.plot()
 print(sample['ood_mask'])
-#print(torch.bincount(sample['ood_mask'].flatten().long()))
+print(torch.bincount(sample['ood_mask'].flatten().long()))
+print(sample["metadata"][SampleMetadataCommonTypes.OOD_SEVERITY.name])
+
+
+plt.show()

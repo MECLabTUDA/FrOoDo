@@ -1,4 +1,7 @@
 
+
+
+
 from os import listdir
 import os
 from os.path import join
@@ -14,12 +17,15 @@ import torch
 import colorsys
 import scipy
 
-from froodo.ood.severity.severity import PixelPercentageSeverityMeasurement
+import matplotlib.pyplot as plt
 
-class CoinAugmentation(OODAugmentation):
+from froodo.ood.severity.severity import PixelPercentageSeverityMeasurement
+from scipy.ndimage.filters import gaussian_filter
+
+class PillAugmentation(OODAugmentation):
     def __init__(self) -> None:
         super().__init__()
-        self.scale = 0.25
+        self.scale = 0.15 * 0.5
         self.severity_class = PixelPercentageSeverityMeasurement()
 
     def _apply_sampling(self):
@@ -29,15 +35,23 @@ class CoinAugmentation(OODAugmentation):
     def _clamp(self, value, miN, maX):
         return max(min(value, maX), miN)
 
-    
+    """
+    def _down_sample(self, img, rate):
+        r = skimage.measure.block_reduce(img[:,:,0], (rate,rate), np.mean)
+        g = skimage.measure.block_reduce(img[:,:,1], (rate,rate), np.mean)
+        b = skimage.measure.block_reduce(img[:,:,2], (rate,rate), np.mean)
+        return np.stack((r, g, b), axis=-1)
+    """
+
     def _augment(self, sample: Sample) -> Sample:
         # Settings
-        align_brightness = True
+        align_brightness = True    #True
         sample_uniformly = True
         random_rotate = True
+        apply_gaussian_filter = True
 
 
-        path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/coins/{random.choice(listdir('froodo/ood/augmentations/endoscopy/artifacts/imgs/coins'))}"
+        path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/pills/{random.choice(listdir('froodo/ood/augmentations/endoscopy/artifacts/imgs/pills'))}"
         
         img = sample.image.permute(1, 2, 0)     #CHW -> HWC
 
@@ -63,6 +77,10 @@ class CoinAugmentation(OODAugmentation):
 
         overlay = imageio.imread(path) / 255.0
         overlay = cv.resize(overlay, (0, 0), fx=self.scale, fy=self.scale)
+
+        if apply_gaussian_filter:
+            overlay = gaussian_filter(overlay, 0.5, mode='constant')
+
 
         if random_rotate:
             rotation_angle = np.random.randint(0, high=360)
@@ -140,9 +158,9 @@ class CoinAugmentation(OODAugmentation):
         )
         ood_mask[from_y:until_y, from_x:until_x][ood_indices] = 0
 
+
         img += noise
 
-        
         sample["image"] = img.permute(2,0,1)    #HWC -> CHW
         sample["ood_mask"] = ood_mask
 

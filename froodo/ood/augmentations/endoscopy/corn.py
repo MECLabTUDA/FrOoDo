@@ -16,7 +16,7 @@ import scipy
 
 from froodo.ood.severity.severity import PixelPercentageSeverityMeasurement
 
-class CoinAugmentation(OODAugmentation):
+class CornAugmentation(OODAugmentation):
     def __init__(self) -> None:
         super().__init__()
         self.scale = 0.25
@@ -32,13 +32,15 @@ class CoinAugmentation(OODAugmentation):
     
     def _augment(self, sample: Sample) -> Sample:
         # Settings
-        align_brightness = True
+        align_brightness = False
         sample_uniformly = True
         random_rotate = True
 
+        path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/corn"
+        sub_folder = random.choice(listdir(path))
+        path = os.path.join(path, sub_folder)
+        path = os.path.join(path, random.choice(listdir(path)))
 
-        path = f"froodo/ood/augmentations/endoscopy/artifacts/imgs/coins/{random.choice(listdir('froodo/ood/augmentations/endoscopy/artifacts/imgs/coins'))}"
-        
         img = sample.image.permute(1, 2, 0)     #CHW -> HWC
 
         img = img.numpy()
