@@ -2,6 +2,9 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from froodo import PneumoniaDataSetAdapter, TubesAugmentation, ForeignBodiesAugmentation, CoinAugmentation, NailsAugmentation, GaussianNoiseAugmentation, MotionBlurAugmentation
 
+
+# Download the dataset from https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
+# and pass the base path to the adapter here
 dataset_adapter = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
 sampleIndex = 100
 sample = dataset_adapter[sampleIndex]

@@ -1,7 +1,8 @@
 from froodo import *
 
-# load dataset
-xray_dataset = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
+# Download the dataset from https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
+# and pass the base path to the adapter here
+dataset_adapter = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
 
 # init network
 model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=False, num_classes=2)
@@ -19,7 +20,7 @@ methods = [MaxClassBaseline(), ODIN(), EnergyBased()]
 
 # create experiment component
 experiment = AugmentationOODEvaluationComponent(
-    data_adapter=xray_dataset,
+    data_adapter=dataset_adapter,
     augmentation=SampledAugmentation(TubesAugmentation(keep_ignored=False)),
     model=model,
     metrics=metrics,

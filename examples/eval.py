@@ -7,6 +7,8 @@ from froodo import PneumoniaDataSetAdapter
 This model evaluation script was kindly provided by the other project group and adapted to the pneumonia data set. 
 '''
 
+# Download the dataset from https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
+# and pass the base path to the adapter here
 adapter = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
 dataloader = torch.utils.data.DataLoader(adapter.dataset, batch_size=16, shuffle=True, num_workers=0)
 
