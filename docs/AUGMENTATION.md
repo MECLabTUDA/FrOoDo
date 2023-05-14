@@ -20,7 +20,7 @@ class Augmentation:
 Interface | Description | Metadata Changes | Code
  -- | -- | -- | :--:
  Augmentation | Base Augmentation class from which every Augmentation inherits | None | [here](../froodo/ood/augmentations/types.py)
- OODAugmentation | Augmentation tht transforms ID images into OOD images e.g. artifacts | OOD Flag, Augmentation severity if provided | [here](../froodo/ood/augmentations/types.py)
+ OODAugmentation | Augmentation that transforms ID images into OOD images e.g. artifacts | OOD Flag, Augmentation severity if provided | [here](../froodo/ood/augmentations/types.py)
  INAugmentation | Augmentation that does **not** change the OOD flag but keeps the data IN Distribution e.g. cropping or resizing of images | None | [here](../froodo/ood/augmentations/types.py)
  AugmentationComposite | An Augmentation composite is a combination of multiple augmentations e.g. pick N of a list | Dependent of parameters | [here](../froodo/ood/augmentations/types.py)
 
@@ -29,7 +29,7 @@ Interface | Description | Metadata Changes | Code
 Interface | Description | Metadata Changes | Code
  -- | -- | -- | :--:
  SampableAugmentation | Sample Augmentation have sampable parameters which makes it possible to run an experiment with augmentations with different parameter values e.g. different scales for artifacts | Keeps Changes of base augmentation | [here](../froodo/ood/augmentations/types.py)
- ArtifactAugmentation | An Artfact Augmentation is a realization of an OODAugmentation and therefore inherits grom it. This interface comes with a method that overlays an artifact on the image | like OODAugmentation | [here](../froodo/ood/augmentations/pathology/artifacts/artifacts.py)
+ ArtifactAugmentation | An Artifact Augmentation is a realization of an OODAugmentation and therefore inherits from it. This interface comes with a method that overlays an artifact on the image | like OODAugmentation | [here](../froodo/ood/augmentations/pathology/artifacts/artifacts.py)
 
  ## FrOoDos Augmentations
 

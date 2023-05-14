@@ -1,13 +1,13 @@
 # How to setup BCSS dataset for FrOoDo's build-in BCSS interface
 
 ## Disclaimer
- It is **not mandatory to use the build-in dataset class** to use it within the framework. Therefore you can write your own dataset and use a dataset adapter. This docu is meant to quickly setup BCSS dataset to run the demo on it.
+ It is **not mandatory to use the built-in dataset class** to use it within the framework. Therefore, you can write your own dataset and use a dataset adapter. This docu is meant to quickly set up BCSS dataset to run the demo on it.
 
-## Lets start
+## Let's start
 
-Please download the BCSS dataset [1] files following the the instructions of the github repository: https://github.com/PathologyDataScience/BCSS.
+Please download the BCSS dataset [1] files following the instructions of the github repository: https://github.com/PathologyDataScience/BCSS.
 
-To use the build-in BCSS Dataset classes the files need to be converted into tif files. You can use the static method of the MultiFileOverlappingTilesDataset to do that.
+To use the built-in BCSS Dataset classes the files need to be converted into tif files. You can use the static method of the MultiFileOverlappingTilesDataset to do that.
 
 ```python
 from froodo import *
@@ -68,7 +68,7 @@ cropped_resized_bcss_set.sample()
 ## FAQ
 Question | Answer
 :-- | --
-Why does it **takes so long** to load the dataset the **first time**? | When you first load the Dataset class it will produce a file that contains all valid regions satisfying your parameters. With this file the dataset will lazy load all tile regions which is much faster than loading in the whole WSI and more flexible that saving all tiles individually
+Why does it **take so long** to load the dataset the **first time**? | When you first load the Dataset class it will produce a file that contains all valid regions satisfying your parameters. With this file the dataset will lazy load all tile regions which is much faster than loading in the whole WSI and more flexible that saving all tiles individually
 
 
 ## References

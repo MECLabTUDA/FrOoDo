@@ -4,7 +4,7 @@ pandas
 tqdm
 scipy
 tabulate
-sklearn
+scikit-learn
 matplotlib
 zarr
 tifffile
