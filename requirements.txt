@@ -10,3 +10,10 @@ zarr
 tifffile
 medmnist
 cloudpickle
+opencv-python
+torchio
+torchvision
+
+scikit-learn
+albumentations
+imageio

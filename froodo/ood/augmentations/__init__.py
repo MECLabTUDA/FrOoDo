@@ -26,3 +26,16 @@ from .patchwise import (
     ZoomInAugmentation,
     GaussianBlurAugmentation,
 )
+
+from .xray import (
+    MotionBlurAugmentation,
+    GaussianNoiseAugmentation,
+    TubesAugmentation,
+    NailsAugmentation,
+    CoinAugmentation,
+    ForeignBodiesAugmentation
+)
+
+from .xray.artifacts import (
+    TubesAugmentation
+)
