@@ -33,9 +33,7 @@ from .xray import (
     TubesAugmentation,
     NailsAugmentation,
     CoinAugmentation,
-    ForeignBodiesAugmentation
+    ForeignBodiesAugmentation,
 )
 
-from .xray.artifacts import (
-    TubesAugmentation
-)
+from .xray.artifacts import TubesAugmentation

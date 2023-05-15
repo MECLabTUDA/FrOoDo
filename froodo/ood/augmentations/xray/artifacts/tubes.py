@@ -30,8 +30,12 @@ def crop(img):
 
     # get bounds of background pixels
     background = np.where(crop_mask == 0)
-    xmin, ymin, xmax, ymax = np.min(background[1]), np.min(background[0]), \
-        np.max(background[1]), np.max(background[0])
+    xmin, ymin, xmax, ymax = (
+        np.min(background[1]),
+        np.min(background[0]),
+        np.max(background[1]),
+        np.max(background[0]),
+    )
     cropped = img[ymin:ymax, xmin:xmax]
 
     return cropped
@@ -84,9 +88,13 @@ class TubesAugmentation(OODAugmentation, SampableAugmentation):
                 overlay_path=join(
                     data_folder,
                     f"tubes/{random.choice(listdir(join(data_folder,'tubes')))}",
-                ) if self.path is None else self.path,
+                )
+                if self.path is None
+                else self.path,
                 mask_threshold=self.mask_threshold,
-                ignore_index=None if not self.keep_ignored else sample.metadata["ignore_index"],
+                ignore_index=None
+                if not self.keep_ignored
+                else sample.metadata["ignore_index"],
             )
 
         sample["image"] = img

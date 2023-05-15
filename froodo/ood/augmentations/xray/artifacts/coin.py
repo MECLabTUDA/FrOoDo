@@ -68,9 +68,13 @@ class CoinAugmentation(OODAugmentation, SampableAugmentation):
                 overlay_path=join(
                     data_folder,
                     f"coin/{random.choice(listdir(join(data_folder,'coin')))}",
-                ) if self.path is None else self.path,
+                )
+                if self.path is None
+                else self.path,
                 mask_threshold=self.mask_threshold,
-                ignore_index=None if not self.keep_ignored else sample.metadata["ignore_index"],
+                ignore_index=None
+                if not self.keep_ignored
+                else sample.metadata["ignore_index"],
             )
 
         sample["image"] = img

@@ -8,16 +8,19 @@ from PIL import Image
 from froodo import Sample
 from froodo import SampleDataset
 
-class KsavirDataset(Dataset,SampleDataset):
+
+class KsavirDataset(Dataset, SampleDataset):
     def __init__(self, root_path: str, crop=False) -> None:
         super().__init__()
         self.root_path = root_path
-        #self.images = glob.glob(root_path + "/*/")
+        # self.images = glob.glob(root_path + "/*/")
         self.images = []
         for folder in os.listdir(root_path):
-            self.images += [folder + "/" + file for file in os.listdir(root_path +"/"+folder)]
+            self.images += [
+                folder + "/" + file for file in os.listdir(root_path + "/" + folder)
+            ]
         self.convert_to_tensor = transforms.PILToTensor()
-        
+
         self.crop = crop
 
     def __len__(self):
@@ -31,11 +34,9 @@ class KsavirDataset(Dataset,SampleDataset):
             HEIGHT = 576
             print(image.shape)
 
-            _ , H, W = image.shape
+            _, H, W = image.shape
             assert H >= HEIGHT
             assert W >= WIDTH
-
-
 
             top = (H - HEIGHT) // 2
             left = (W - WIDTH) // 2

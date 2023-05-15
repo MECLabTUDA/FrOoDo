@@ -11,11 +11,11 @@ from ..utils import full_image_ood
 
 class GaussianNoiseAugmentation(OODAugmentation, SampableAugmentation):
     def __init__(
-            self,
-            sigma=0.005,
-            sample_intervals=None,
-            severity: SeverityMeasurement = None,
-            keep_ignored=True,
+        self,
+        sigma=0.005,
+        sample_intervals=None,
+        severity: SeverityMeasurement = None,
+        keep_ignored=True,
     ) -> None:
         super().__init__()
         self.sigma = sigma
@@ -40,7 +40,9 @@ class GaussianNoiseAugmentation(OODAugmentation, SampableAugmentation):
     def sigma(self, value):
         self._sigma = value
         # zero mean noise, variance is configurable
-        self.transform = A.GaussNoise(mean=0, var_limit=self._sigma, per_channel=False, p=1)
+        self.transform = A.GaussNoise(
+            mean=0, var_limit=self._sigma, per_channel=False, p=1
+        )
 
     def _apply_sampling(self):
         return super()._set_attr_to_uniform_samples_from_intervals(
@@ -51,9 +53,9 @@ class GaussianNoiseAugmentation(OODAugmentation, SampableAugmentation):
         return {"sigma": self.sigma}
 
     def _augment(self, sample: Sample) -> Sample:
-        X = sample['image']
+        X = sample["image"]
         X = X.numpy().transpose((1, 2, 0))
         img = self.transform(image=X)
-        sample['image'] = torch.from_numpy(img['image'].transpose(2, 0, 1))
+        sample["image"] = torch.from_numpy(img["image"].transpose(2, 0, 1))
         sample = full_image_ood(sample, self.keep_ignored)
         return sample

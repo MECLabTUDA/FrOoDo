@@ -38,7 +38,7 @@ class TemperatureScaling(OODMethod):
 
         loss = self.criterion(self._temperature_scale(outputs[0]), labels)
         loss.backward()
-        if loss.item()>1e-5:
+        if loss.item() > 1e-5:
             optimizer.step()
             lr_scheduler.step(loss)
 

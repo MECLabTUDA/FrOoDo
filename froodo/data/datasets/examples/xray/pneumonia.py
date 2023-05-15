@@ -3,17 +3,23 @@ import torchvision as tv
 import torch
 from ...adapter.adapter import DatasetAdapter, Sample
 
-'''
+"""
 Uses the chest xray pneumonia dataset from: https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
-'''
+"""
 
 
 class PneumoniaDataSetAdapter(DatasetAdapter):
-    def __init__(self, dir_path, split='test', **kwargs) -> None:
-        transform = tv.transforms.Compose([tv.transforms.Resize(255),
-                                           tv.transforms.CenterCrop(224),
-                                           tv.transforms.ToTensor()])
-        dataset = tv.datasets.ImageFolder(path.join(dir_path, split), transform=transform)
+    def __init__(self, dir_path, split="test", **kwargs) -> None:
+        transform = tv.transforms.Compose(
+            [
+                tv.transforms.Resize(255),
+                tv.transforms.CenterCrop(224),
+                tv.transforms.ToTensor(),
+            ]
+        )
+        dataset = tv.datasets.ImageFolder(
+            path.join(dir_path, split), transform=transform
+        )
         super().__init__(dataset, *kwargs)
 
     def _add_metadata_args(self, sample: Sample) -> Sample:
