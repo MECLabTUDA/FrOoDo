@@ -28,3 +28,4 @@ imgs/OODaug_PathMNIST_Acc_severity.svg
 imgs/OODaug_pathmnist_dice_severity2.svg
 imgs/squam_bcss_dice_severity.svg
 imgs/thre_bcss_dice_severity.svg
+froodo/ood/methods/ow_mahalanobis.py
