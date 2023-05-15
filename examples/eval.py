@@ -3,18 +3,22 @@ from torch.utils.data import Dataset
 from tqdm import trange
 from froodo import PneumoniaDataSetAdapter
 
-'''
+"""
 This model evaluation script was kindly provided by the other project group and adapted to the pneumonia data set. 
-'''
+"""
 
 # Download the dataset from https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
 # and pass the base path to the adapter here
-adapter = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='test')
-dataloader = torch.utils.data.DataLoader(adapter.dataset, batch_size=16, shuffle=True, num_workers=0)
+adapter = PneumoniaDataSetAdapter("~/Downloads/chest_xray/", split="test")
+dataloader = torch.utils.data.DataLoader(
+    adapter.dataset, batch_size=16, shuffle=True, num_workers=0
+)
 
 dataloader = iter(dataloader)
 
-model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=False, num_classes=2)
+model = torch.hub.load(
+    "pytorch/vision:v0.10.0", "mobilenet_v2", pretrained=False, num_classes=2
+)
 model.load_state_dict(torch.load("./model.pth"))
 model = model.cuda()
 model = model.eval()

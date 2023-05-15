@@ -7,16 +7,20 @@ import matplotlib.pyplot as plt
 
 from froodo import PneumoniaDataSetAdapter
 
-'''
+"""
 This model training script was kindly provided by the other project group and adapted to the pneumonia data set. 
-'''
+"""
 
 # Download the dataset from https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
 # and pass the base path to the adapter here
-adapter = PneumoniaDataSetAdapter('~/Downloads/chest_xray/', split='train')
-dataloader = torch.utils.data.DataLoader(adapter.dataset, batch_size=16, shuffle=True, num_workers=0)
+adapter = PneumoniaDataSetAdapter("~/Downloads/chest_xray/", split="train")
+dataloader = torch.utils.data.DataLoader(
+    adapter.dataset, batch_size=16, shuffle=True, num_workers=0
+)
 
-model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=False, num_classes=2)
+model = torch.hub.load(
+    "pytorch/vision:v0.10.0", "mobilenet_v2", pretrained=False, num_classes=2
+)
 model = model.cuda()
 model = model.train()
 
@@ -35,11 +39,15 @@ all_losses = []
 
 for epoch in range(num_epochs):
     epoch_losses = []
-    print("start epoch {epoch} using LR: {lr:.4f}".format(epoch=epoch, lr=optimizer.param_groups[0]['lr']))
+    print(
+        "start epoch {epoch} using LR: {lr:.4f}".format(
+            epoch=epoch, lr=optimizer.param_groups[0]["lr"]
+        )
+    )
 
     with trange(num_samples_per_epoch) as tbar:
         for b in tbar:
-            tbar.set_description("Epoch {}/{}".format(epoch+1, num_epochs))
+            tbar.set_description("Epoch {}/{}".format(epoch + 1, num_epochs))
 
             image, label = next(iter(dataloader))
             image = image.cuda()
@@ -63,9 +71,9 @@ for epoch in range(num_epochs):
     lr_scheduler.step(mean)
 
 plt.plot(all_losses)
-plt.title('Training Loss')
-plt.xlabel('epochs')
-plt.ylabel('loss')
+plt.title("Training Loss")
+plt.xlabel("epochs")
+plt.ylabel("loss")
 plt.show()
 
 torch.save(model.state_dict(), "./model.pth")

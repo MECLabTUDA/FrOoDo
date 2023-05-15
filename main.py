@@ -13,8 +13,12 @@ from froodo.data.metadata.types import SampleMetadataCommonTypes
 from froodo.ood.augmentations.endoscopy.blood import BloodAugmentation
 from froodo.ood.augmentations.endoscopy.corn import CornAugmentation
 from froodo.ood.augmentations.endoscopy.pill import PillAugmentation
-from froodo.ood.augmentations.endoscopy.random_hue_shifts import RandomHueShiftAugmentation
-from froodo.ood.augmentations.endoscopy.random_value_shifts import RandomValueShiftAugmentation
+from froodo.ood.augmentations.endoscopy.random_hue_shifts import (
+    RandomHueShiftAugmentation,
+)
+from froodo.ood.augmentations.endoscopy.random_value_shifts import (
+    RandomValueShiftAugmentation,
+)
 
 from froodo.ood.augmentations.endoscopy.vignette import Vignette
 from froodo.ood.augmentations.endoscopy.coins import CoinAugmentation
@@ -55,17 +59,17 @@ class KsavirDataset(Dataset,SampleDataset):
 
 
 ksavir_dataset = KsavirDataset("../FrOoDo/Datasets/kvasir-dataset-v2", True)
-assert len(ksavir_dataset)==8000
+assert len(ksavir_dataset) == 8000
 sample = random.randint(0, len(ksavir_dataset))
-#sample = 4875
-#sample = 5341
-#sample = 3736
-#sample = 1602
-#sample = 5731
-#sample = 3903
+# sample = 4875
+# sample = 5341
+# sample = 3736
+# sample = 1602
+# sample = 5731
+# sample = 3903
 print("sample Num: ", sample)
 sample = ksavir_dataset[sample]
-#sample = Nothing()(sample)
+# sample = Nothing()(sample)
 
 """
 plt.imshow(sample.image.permute(1,2,0))
@@ -75,37 +79,34 @@ plt.show()
 """
 
 
-#sample = BloodAugmentation()(sample)
-#sample = RandomValueShiftAugmentation()(sample)
-#sample = CoinAugmentation()(sample)
-#sample = CornAugmentation()(sample)
-#sample = PillAugmentation()(sample)
-#sample = RandomHueShiftAugmentation()(sample)
-#sample = KidneyBeanAugmentation()(sample)
-#sample = GreenOnionAugmentation()(sample)
-#sample = ChiliAugmentation()(sample)
-#sample = PumpkinSeedAugmentation()(sample)
-#sample = MelonSeedAugmentation()(sample)
+# sample = BloodAugmentation()(sample)
+# sample = RandomValueShiftAugmentation()(sample)
+# sample = CoinAugmentation()(sample)
+# sample = CornAugmentation()(sample)
+# sample = PillAugmentation()(sample)
+# sample = RandomHueShiftAugmentation()(sample)
+# sample = KidneyBeanAugmentation()(sample)
+# sample = GreenOnionAugmentation()(sample)
+# sample = ChiliAugmentation()(sample)
+# sample = PumpkinSeedAugmentation()(sample)
+# sample = MelonSeedAugmentation()(sample)
 sample = OatsAugmentation()(sample)
 sample = CoinV2Augmentation()(sample)
 sample = PillV2Augmentation()(sample)
-
-
 
 
 sample = Vignette(0.2)(sample)
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 2, 1)
-plt.imshow(sample.image.permute(1,2,0))
+plt.imshow(sample.image.permute(1, 2, 0))
 fig.add_subplot(1, 2, 2)
-plt.imshow(sample['ood_mask'])
+plt.imshow(sample["ood_mask"])
 
 
-
-#sample.plot()
-print(sample['ood_mask'])
-print(torch.bincount(sample['ood_mask'].flatten().long()))
+# sample.plot()
+print(sample["ood_mask"])
+print(torch.bincount(sample["ood_mask"].flatten().long()))
 print(sample["metadata"][SampleMetadataCommonTypes.OOD_SEVERITY.name])
 
 
