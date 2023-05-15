@@ -72,6 +72,8 @@ class OODAugmentation(Augmentation):
             severity = self._set_severity(sample)
             if severity.get_bin(ignore_true_bin=True) == -1:
                 is_ood = False
+                sample["metadata"][SampleMetadataCommonTypes.OOD_SEVERITY.name] = None
+                sample["metadata"].type = DistributionSampleType.IN_DATA
             else:
                 sample["metadata"][
                     SampleMetadataCommonTypes.OOD_SEVERITY.name
@@ -84,7 +86,7 @@ class OODAugmentation(Augmentation):
             ] = OODReason.AUGMENTATION_OOD
             sample["metadata"][SampleMetadataCommonTypes.OOD_AUGMENTATION.name] = type(
                 self
-            )
+            ).__name__
 
         return sample
 
@@ -99,6 +101,12 @@ class AugmentationComposite(Augmentation):
 
 class INAugmentation(Augmentation):
     def _set_metadata(self, sample: Sample) -> Sample:
+        return sample
+
+    def __call__(self, sample: Sample) -> Sample:
+        sample = init_augmentation(sample, create_ood=False)
+        sample = self._augment(sample)
+        sample = self._set_metadata(sample)
         return sample
 
 
